@@ -1,0 +1,31 @@
+﻿@model CatalogViewModel
+<div class="filter-container">
+    <form asp-action="Index" asp-controller="Catalog" method="post">
+        <div class="brand-filter">
+            @* <label></label> *@
+            @* <select asp-for="Brand"></select> *@
+        </div>
+        <div class="type-filter">
+            @* <label></label>
+            <select></select> *@
+        </div>
+        <input type="submit" />
+    </form>
+</div>
+
+<div class="container">
+    @if (Model.CatalogItems.Any())
+    {
+        //<partial name="_pagination" model=""/>
+        @foreach (var item in Model.CatalogItems)
+        {
+            <div class="items-container">
+                <partial name="_item" model="item" />
+            </div>
+        }
+    }
+    else
+    {
+        <div>Epmty</div>
+    }
+</div>
