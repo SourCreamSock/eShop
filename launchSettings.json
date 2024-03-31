@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "catalog-api": "StartDebugging",
+        "webmvc": "StartDebugging"
+      }
+    }
+  }
+}

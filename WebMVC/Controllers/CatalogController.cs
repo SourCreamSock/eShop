@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebMVC.Models.ViewModels;
 using WebMVC.Services;
 
 namespace WebMVC.Controllers
@@ -12,7 +13,9 @@ namespace WebMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var catalog = _catalogService.GetItems();
+            var catalogItems = await _catalogService.GetItems();
+            var model = new CatalogViewModel { CatalogItems = catalogItems };
+            return View(model);
         }
     }
 }

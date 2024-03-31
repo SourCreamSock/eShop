@@ -1,17 +1,20 @@
 ﻿@model CatalogViewModel
-<div class="filter-container">
+@{
+    ViewData["Title"] = "Catalog";
+}
+@* <div class="filter-container">
     <form asp-action="Index" asp-controller="Catalog" method="post">
         <div class="brand-filter">
-            @* <label></label> *@
-            @* <select asp-for="Brand"></select> *@
+            <label></label> 
+            <select asp-for="Brand"></select>
         </div>
         <div class="type-filter">
-            @* <label></label>
-            <select></select> *@
+            <label></label>
+            <select></select> 
         </div>
         <input type="submit" />
     </form>
-</div>
+</div> *@
 
 <div class="container">
     @if (Model.CatalogItems.Any())

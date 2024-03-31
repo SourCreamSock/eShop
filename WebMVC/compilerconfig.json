@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "wwwroot/scss/app.component.css",
+    "inputFile": "wwwroot/scss/app.component.scss"
+  },
+  {
+    "outputFile": "wwwroot/scss/Catalog/catalog.component.css",
+    "inputFile": "wwwroot/scss/Catalog/catalog.component.scss"
+  }
+]

@@ -13,23 +13,39 @@ namespace WebMVC.Services
     {
         //private readonly string _GetAllCatalogItems;
         private readonly HttpClient _httpClient;
-        public CatalogService(HttpClient httpClient)
+        private readonly string _urlCatalog;
+        public CatalogService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _urlCatalog = configuration.GetValue<string>("catalog-api-url");
         }
-        public  async Task<List<CatalogItem>> GetItems(int? page = null, int? pageIndex = null)
+        /// <summary>
+        /// Получить объекты 
+        /// </summary>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<CatalogItem>> GetItems(int? pageSize = null, int? pageIndex = null)
         {
-            var queryParams = new NameValueCollection();
-            var uri = API.Catalog.GetAllItems();
-            var uriBuilder =new UriBuilder(uri);                        
-            if (page.HasValue)
-                queryParams["page"] = page.Value.ToString();
-            if (pageIndex.HasValue)
-                queryParams["pageIndex"] = pageIndex.Value.ToString();
-            uriBuilder.Query = queryParams.ToString();
-            var response = await _httpClient.GetAsync(uriBuilder.ToString());
-            var items = JsonSerializer.Deserialize<List<CatalogItem>>(response.Content.ReadAsStream());
-            return items;
+            try
+            {
+                var queryParams = new NameValueCollection();
+                var urlItems = API.Catalog.GetAllItems();
+                var uriBuilder = new UriBuilder(_urlCatalog + urlItems);
+                if (pageSize.HasValue)
+                    queryParams["pageSize"] = pageSize.Value.ToString();
+                if (pageIndex.HasValue)
+                    queryParams["pageIndex"] = pageIndex.Value.ToString();
+                uriBuilder.Query = queryParams.ToString();
+                var response = await _httpClient.GetAsync(uriBuilder.ToString());
+                var items = JsonSerializer.Deserialize<IEnumerable<CatalogItem>>(response.Content.ReadAsStream());
+                return items;
+            }
+            catch (Exception)
+            {
+                return new List<CatalogItem> { };
+                throw;
+            }
         }
     }
 }
