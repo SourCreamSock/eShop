@@ -2,7 +2,9 @@
   "profiles": {
     "Docker Compose": {
       "commandName": "DockerCompose",
+      "commandVersion": "1.0",
       "serviceActions": {
+        "sql": "StartDebugging",
         "catalog-api": "StartDebugging",
         "webmvc": "StartDebugging"
       }

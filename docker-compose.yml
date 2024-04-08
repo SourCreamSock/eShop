@@ -2,28 +2,31 @@ version: '3.4'
 
 services:
   sql:
-   image: mcr.microsoft.com/mssql/server:2019-latest 
-   environment:
-     - SA_PASSWORD=123456
-     - ACCEPT_EULA=Y
-   volumes:
-     - sql-data:/var/opt/mssql/data
-   ports:
-     - "5001:5001"
+    image: 'mcr.microsoft.com/mssql/server:2019-latest'
+    environment:
+      - SA_PASSWORD=123456
+      - ACCEPT_EULA=Y
+    volumes:
+      - sql-data:/var/opt/mssql/data
+    ports:
+      - '5001:5001'
   catalog-api:
     build: Services/Catalog/Catalog.API/Dockerfile
-    environment:
-      - ConnectionStrings__CatalogConnection=Data Source=127.0.0.1,5001;Initial Catalog=Catalogdb;User Id=sa;Password=123456;Encrypt=false;
+    environment:      
+      - ConnectionStrings__CatalogConnection=Data Source=127.0.0.1,5001;InitialCatalog=Catalogdb;User Id=sa;Password=123456;Encrypt=false;
     depends_on:
       - sql
     ports:
-      - "5002:5002"
+      - '5002:5002'
   webmvc:
-    build: WebApps/WebMVC/Dockerfile    
+    build: WebApps/WebMVC/Dockerfile
     depends_on:
       - sql
       - catalog-api
     environment:
-      - catalog-api-url=http://host.docker.internal:5002
+      - 'catalog-api-url=http://host.docker.internal:5002'
     ports:
-      - "5003:5003"
+      - '5003:5003'
+volumes:
+    sql-data:  
+     
