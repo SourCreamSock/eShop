@@ -10,6 +10,7 @@ namespace Catalog.API.Infrastructure
         {
             var migrator = this.GetService<IMigrator>();
             migrator.Migrate("20240319172520_addEAV");
+            //test
             //Database.EnsureDeleted();
             Database.Migrate();
             //    CatalogItems = catalogItems ?? throw new ArgumentNullException(nameof(catalogItems));
