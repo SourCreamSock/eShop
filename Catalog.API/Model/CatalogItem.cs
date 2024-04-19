@@ -14,7 +14,7 @@ namespace Catalog.API.Model
         [Required]
         public int CategoryId { get; set; }        
         public CatalogItemCategory CatalogItemCategory { get; set; }        
-        public string PictureUri { get; set; }        
+        //public string PictureUri { get; set; }        
      
     }
 }

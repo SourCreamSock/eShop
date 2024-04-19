@@ -6,7 +6,7 @@
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>313c3b3a-c173-462a-a65d-0914164b8cf2</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>http://host.docker.internal:5101</DockerServiceUrl>
+    <DockerServiceUrl>http://host.docker.internal:5003</DockerServiceUrl>
     <DockerServiceName>webmvc</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

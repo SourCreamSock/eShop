@@ -1,9 +1,15 @@
-﻿namespace Catalog.API.Infrastructure
+﻿using Catalog.API.Migrations;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Catalog.API.Infrastructure
 {
     public class CatalogContext: DbContext
     {
         public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
         {
+            var migrator = this.GetService<IMigrator>();
+            migrator.Migrate("20240319172520_addEAV");
             //Database.EnsureDeleted();
             Database.Migrate();
             //    CatalogItems = catalogItems ?? throw new ArgumentNullException(nameof(catalogItems));
