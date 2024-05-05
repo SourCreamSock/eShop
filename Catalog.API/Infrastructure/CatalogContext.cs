@@ -1,5 +1,4 @@
-﻿using Catalog.API.Migrations;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Catalog.API.Infrastructure
@@ -8,43 +7,26 @@ namespace Catalog.API.Infrastructure
     {
         public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
         {
-            var migrator = this.GetService<IMigrator>();
-            migrator.Migrate("20240319172520_addEAV");
-            //test
-            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
             Database.Migrate();
             //    CatalogItems = catalogItems ?? throw new ArgumentNullException(nameof(catalogItems));
             //    CatalogTypes = catalogTypes ?? throw new ArgumentNullException(nameof(catalogTypes));            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CatalogItemCategory>().ToTable("CatalogItemCategories").HasKey(k => k.Id);
+            modelBuilder.Entity<CatalogBrand>().ToTable("CatalogBrands").HasKey(k => k.Id);
+            modelBuilder.Entity<CatalogCategory>().ToTable("CatalogCategories").HasKey(k => k.Id);
 
             modelBuilder.Entity<CatalogItem>().ToTable("CatalogItems").HasKey(k => k.Id);
-            modelBuilder.Entity<CatalogItem>().HasOne(o => o.CatalogItemCategory).WithMany().HasForeignKey(k => k.CategoryId)
+            modelBuilder.Entity<CatalogItem>().HasOne(o => o.CatalogBrand).WithMany().HasForeignKey(k => k.CatalogBrandId)
                 .HasPrincipalKey(k => k.Id);
-
-            modelBuilder.Entity<CatalogItemAttribute>().ToTable("CatalogItemAttributes").HasKey(k => k.Id);                        
-
-            modelBuilder.Entity<CatalogItemAttributeCategory>().ToTable("CatalogItemAttributeCategories");
-            modelBuilder.Entity<CatalogItemAttributeCategory>().HasOne(o => o.CatalogItemAttribute).WithMany().HasForeignKey(k => k.CatalogItemAttributeId)
+            modelBuilder.Entity<CatalogItem>().HasOne(o => o.CatalogCategory).WithMany().HasForeignKey(k => k.CatalogCategoryId)
                 .HasPrincipalKey(k => k.Id);
-            modelBuilder.Entity<CatalogItemAttributeCategory>().HasOne(o => o.CatalogItemCategory).WithMany().HasForeignKey(k => k.CatalogItemCategoryId)
-                .HasPrincipalKey(k => k.Id);   
-            
-            modelBuilder.Entity<CatalogItemAttributeValue>().ToTable("CatalogItemAttributeValues").HasKey(k => k.Id);
-            modelBuilder.Entity<CatalogItemAttributeValue>().HasOne(o => o.CatalogItem).WithMany().HasForeignKey(k => k.CatalogItemId)
-                .HasPrincipalKey(k => k.Id);
-            modelBuilder.Entity<CatalogItemAttributeValue>().HasOne(o => o.CatalogItemAttribute).WithMany().HasForeignKey(k => k.CatalogItemAttributeId)
-                .HasPrincipalKey(k => k.Id);
-
-
         }
         public DbSet<CatalogItem> CatalogItems { get; set; }
-        public DbSet<CatalogItemCategory> CatalogItemCategories { get; set; }
-        public DbSet<CatalogItemAttribute> CatalogItemAttributes { get; set; }        
-        public DbSet<CatalogItemAttributeCategory> CatalogItemAttributeCategories { get; set; }        
-        public DbSet<CatalogItemAttributeValue> CatalogItemAttributeValues { get; set; }        
+        public DbSet<CatalogBrand> CatalogBrands { get; set; }
+        public DbSet<CatalogCategory> CatalogCategories { get; set; }
+               
     }
   
 

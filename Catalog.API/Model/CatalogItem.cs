@@ -12,9 +12,12 @@ namespace Catalog.API.Model
         [Required]
         public decimal Price { get; set; }
         [Required]
-        public int CategoryId { get; set; }        
-        public CatalogItemCategory CatalogItemCategory { get; set; }        
+        public long CatalogBrandId { get; set; }        
+        [Required]
+        public long CatalogCategoryId { get; set; }
+        public CatalogBrand CatalogBrand { get; set; }        
+        public CatalogCategory CatalogCategory { get; set; }
         //public string PictureUri { get; set; }        
-     
+
     }
 }

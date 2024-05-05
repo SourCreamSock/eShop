@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebMVC.Models
+namespace Catalog.API.Model.API_Models
 {
-    public class CatalogItem
+    public class ItemsViewModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; }        
         public string Name { get; set; }
         public string Code { get; set; }
         public decimal Price { get; set; }
@@ -12,6 +12,5 @@ namespace WebMVC.Models
         public long CategoryId { get; set; }
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
-
     }
 }
