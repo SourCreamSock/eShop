@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0  AS base
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY ["Catalog.API/Catalog.API.csproj", "Catalog.API/"]
 RUN dotnet restore "Catalog.API/Catalog.API.csproj"
@@ -14,4 +14,4 @@ RUN dotnet publish "Catalog.API.csproj"   -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Catalog.API.dll"]
+ENTRYPOINT ["dotnet", "watch","Catalog.API.dll"]

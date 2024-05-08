@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY ["WebMVC/WebMVC.csproj", "WebMVC/"]
 RUN dotnet restore "WebMVC/WebMVC.csproj"
@@ -14,6 +14,6 @@ RUN dotnet publish "WebMVC.csproj" -c Release -o /app/build
 FROM base As final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet","WebMVC.dll"]
+ENTRYPOINT ["dotnet","watch","WebMVC.dll"]
 
 
