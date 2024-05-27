@@ -19,13 +19,14 @@
 <div class="container">
     @if (Model.CatalogItems.Any())
     {
-        //<partial name="_pagination" model=""/>
-        @foreach (var item in Model.CatalogItems)
-        {
-            <div class="items-container">
+        <div class="items-container">
+            @foreach (var item in Model.CatalogItems)
+            {
                 <partial name="_item" model="item" />
-            </div>
-        }
+            }
+        </div>
+        //<partial name="_pagination" model=""/>
+        
     }
     else
     {

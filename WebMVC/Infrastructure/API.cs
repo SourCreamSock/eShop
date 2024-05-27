@@ -8,6 +8,10 @@
             {
                 return "items";
             }
+            public static string GetAllItem()
+            {
+                return "item";
+            }
         }
     }
 }

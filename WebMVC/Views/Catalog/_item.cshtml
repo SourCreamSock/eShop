@@ -1,7 +1,14 @@
 ﻿@model CatalogItem
+@{
+    string itemPath = ViewBag.ItemPageUrl;
+}
 
-<div class="item">
+<div class="catalog-item">
+    <div class="item-picture">
+        <a class="item-link-wrapper" href="@(itemPath + "?itemId=" + Model.Id.ToString())">
+            <img src="@Model.PicturePath" />
+        </a>
+    </div>
     <div class="item-name"><span>@Model.Name</span></div>
-    <div class="item-price"><span>@Model.Price</span></div>
-    fd
+    <div class="item-price"><span>Цена: @Model.Price</span></div>        
 </div>

@@ -1,6 +1,6 @@
-﻿namespace Catalog.API.Model
+﻿namespace WebMVC.Models
 {
-    public class CatalogModel
+    public class CatalogBrand
     {
         public long Id { get; set; }
         public string Name { get; set; }

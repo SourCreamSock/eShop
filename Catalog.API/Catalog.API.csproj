@@ -19,4 +19,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Pictures\ApplesAntonovka.jpg" />
+    <None Include="wwwroot\Pictures\ApplesGreen.jpg" />
+  </ItemGroup>
+
 </Project>

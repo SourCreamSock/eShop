@@ -1,0 +1,17 @@
+﻿ @model CatalogItemDetailed
+
+<div class="item-body">
+    <h1 class="item-name">@Model.Name</h1>     
+    <div class="item-main-block">
+        <div class="item-left-side-info">
+            <div class="item-picture">
+                <img src="@Model.PicturePath" />
+            </div>
+            <h3 class="item-price">Цена: @Model.Price</h3>
+        </div>
+        <div class="item-right-side-info">
+            <div class="item-description"><p>Описание: @Model.Description</p></div>
+        </div>
+        
+    </div>    
+</div> 
