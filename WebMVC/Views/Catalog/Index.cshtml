@@ -2,19 +2,42 @@
 @{
     ViewData["Title"] = "Catalog";
 }
-@* <div class="filter-container">
-    <form asp-action="Index" asp-controller="Catalog" method="post">
-        <div class="brand-filter">
-            <label></label> 
-            <select asp-for="Brand"></select>
+<div class="filter-container">
+    <form asp-action="Index" asp-controller="Catalog" method="get">
+        <div class="filter filter-category">
+            <label for="CategoryId">Категория</label>
+            <select asp-for="CategoryId" asp-items="@Model.CatalogCategories">
+                <option value="">Не выбрано</option>
+            </select>
         </div>
-        <div class="type-filter">
-            <label></label>
-            <select></select> 
+        <div class="filter filter-brand">
+            <label for="BrandId">Бренд</label>
+            <select asp-for="BrandId" asp-items="@Model.CatalogBrands">
+                <option value="">Не выбрано</option>
+            </select>
         </div>
-        <input type="submit" />
+        
+        <input type="submit" value="Подтвердить" />
     </form>
-</div> *@
+    <script>
+        let categoryEl = document.getElementsByName('CategoryId')[0];
+        let brandEl = document.getElementsByName('BrandId')[0];
+        window.addEventListener("load", e => {
+            categoryEl.addEventListener("change", e => {
+                fetch('@Url.Action("GetCatalogBrands")?' + new URLSearchParams({ categoryId: categoryEl.value }), { method: 'GET' })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        var newOptions = `<option value="">Не выбрано</option>`;
+                        data.forEach(f => {
+                            newOptions += `<option value=${f.id}>${f.name}</option>`;
+                        })
+                        brandEl.innerHTML = newOptions;
+                    })
+            })
+        })
+        
+    </script>
+</div>
 
 <div class="container">
     @if (Model.CatalogItems.Any())
@@ -26,7 +49,6 @@
             }
         </div>
         //<partial name="_pagination" model=""/>
-        
     }
     else
     {

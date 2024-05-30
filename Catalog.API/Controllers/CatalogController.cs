@@ -3,6 +3,7 @@ using Catalog.API.Model.API_Models;
 using Catalog.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Catalog.API.Controllers
 {
@@ -58,7 +59,7 @@ namespace Catalog.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<CatalogCategory>), StatusCodes.Status200OK)]        
         [Route("categories")]
-        public async Task<IActionResult> CategoriesAsync(long id)//а точно FromQuery
+        public async Task<IActionResult> CategoriesAsync()//а точно FromQuery
         {
 
             var categories = await _context.CatalogCategories.ToListAsync();
@@ -67,10 +68,15 @@ namespace Catalog.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<CatalogBrand>), StatusCodes.Status200OK)]
         [Route("brands")]
-        public async Task<IActionResult> BrandsAsync(long id)//а точно FromQuery
+        public async Task<IActionResult> BrandsAsync(long? categoryId)//а точно FromQuery
         {
 
             var brands = await _context.CatalogBrands.ToListAsync();
+            if (categoryId.HasValue)
+            {
+                var allowedBrandIds = await _context.CatalogItems.Where(w => w.CatalogCategoryId == categoryId).Select(f => f.CatalogBrandId).Distinct().ToListAsync();
+                brands = brands.Where(brand => allowedBrandIds.Contains(brand.Id)).ToList();
+            }
             return Ok(brands);
         }
     }

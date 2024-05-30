@@ -80,11 +80,13 @@ namespace WebMVC.Services
                 throw;
             }
         }
-        public async Task<IEnumerable<CatalogBrand>> GetBrands()
+        public async Task<IEnumerable<CatalogBrand>> GetBrands(long? categoryId = null)
         {
             try
             {
-                var url = _urlCatalog + $"categories";
+                var url = _urlCatalog + $"brands";
+                if (categoryId.HasValue)
+                    url += $"?categoryId={categoryId}";
                 var response = await _httpClient.GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
                 var items = JsonConvert.DeserializeObject<IEnumerable<CatalogBrand>>(result);
