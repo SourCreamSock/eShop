@@ -26,26 +26,30 @@ namespace WebMVC.Services
             _selfUrl = configuration.GetValue<string>("SelfUrl");
         }
       
-        public async Task<IEnumerable<CatalogItem>> GetItems(int? pageSize = null, int? pageIndex = null)
+        public async Task<CatalogItemsResponse> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize = null )
         {
             try
             {
                 var queryParams = new Dictionary<string,string>();
                 var urlItems = "items";
                 var uriBuilder = new UriBuilder(_urlCatalog + urlItems);
-                if (pageSize.HasValue)
-                    queryParams["pageSize"] = pageSize.Value.ToString();
+                if (categoryId.HasValue)
+                    queryParams["categoryId"] = categoryId.Value.ToString();
+                if (brandId.HasValue)
+                    queryParams["brandId"] = brandId.Value.ToString();
                 if (pageIndex.HasValue)
                     queryParams["pageIndex"] = pageIndex.Value.ToString();
+                if (pageSize.HasValue)
+                    queryParams["pageSize"] = pageSize.Value.ToString();
                 uriBuilder.Query = string.Join('&', queryParams.Select(s => s.Key + "=" + s.Value));
                 var response = await _httpClient.GetAsync(uriBuilder.ToString());
                 var result = await response.Content.ReadAsStringAsync();
-                var items = JsonConvert.DeserializeObject<List<CatalogItem>>(result);
+                var items = JsonConvert.DeserializeObject<CatalogItemsResponse>(result);
                 return items;
             }
             catch (Exception ex)
             {
-                return new List<CatalogItem> { };
+                return null;
                 throw;
             }
         }

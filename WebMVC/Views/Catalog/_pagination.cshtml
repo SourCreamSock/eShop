@@ -1,1 +1,33 @@
-﻿
+﻿@model CatalogViewModel
+<article class="pagination">    
+    <nav class="paginator-container">
+        @if (Model.PageIndex - 1 >= 0)
+        {
+            <a asp-controller="Catalog"
+               asp-action="Index"
+               asp-route-pageIndex="@(Model.PageIndex-1)">
+                <p class="page-index">@(Model.PageIndex - 1)</p>
+            </a>
+        }
+        @if (Model.PageIndex - 1 >= 0)
+        {                
+            <a asp-controller="Catalog"
+                asp-action="Index"
+                asp-route-pageIndex="@(Model.PageIndex-1)">
+                <p class="page-index">@(Model.PageIndex-1)</p>
+            </a>
+        }
+        <p class="page-index page-index-current">@Model.PageIndex</p>
+
+        @if (Model.PageIndex + 1 < Model.PageCount)
+        {            
+            <a asp-controller="Catalog"
+                    asp-action="Index"
+                    asp-route-pageIndex="@(Model.PageIndex+1)">
+                <p class="page-index">@(Model.PageIndex+1)</p>
+            </a>                
+        }
+           
+    </nav>      
+    
+</article>

@@ -17,25 +17,31 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<ItemsViewModel>),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ItemsViewModel),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items")]
-        public async Task<IActionResult> ItemsAsync([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)//а точно FromQuery
+        public async Task<IActionResult> ItemsAsync([FromQuery] long? categoryId, [FromQuery] long? brandId, 
+            [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
         {
-
-            List<ItemsViewModel> items = await _context.CatalogItems.Skip(pageSize*pageIndex).Take(pageSize).Select(s=>new ItemsViewModel
+            var queryItems =  _context.CatalogItems.Skip(pageSize * pageIndex).Take(pageSize);
+            if (categoryId.HasValue)
             {
-                BrandId = s.CatalogBrandId,
-                Name = s.Name,
-                BrandName = s.CatalogBrand.Name,
-                CategoryName = s.CatalogCategory.Name,
-                CategoryId = s.CatalogCategoryId,
-                Code = s.Code,
-                Id= s.Id,
-                Price = s.Price,
-                PicturePath = _pictureHelper.FullPathToPicture(s.PicturePath)
-            }).ToListAsync();
-            return Ok(items);
+                queryItems =  queryItems.Where(w => w.CatalogCategoryId == categoryId.Value);
+            }
+            if (brandId.HasValue)
+            {
+                queryItems = queryItems.Where(w => w.CatalogBrandId == brandId.Value);
+            }
+            var items = await queryItems.ToListAsync();
+            items.ForEach(item => item.PictureUri = _pictureHelper.FullPathToPicture(item.PicturePath));
+
+            ItemsViewModel response = new ItemsViewModel
+            {
+                CatalogItems = items,
+                TotalCount = await _context.CatalogItems.LongCountAsync()
+            };
+            
+            return Ok(response);
         }
 
         [HttpGet]

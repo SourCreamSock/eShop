@@ -5,6 +5,8 @@ builder.Services.AddHttpClient<CatalogService>();
 builder.Services.AddControllersWithViews(); 
 
 var app = builder.Build();
+if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllerRoute("default","{controller=Catalog}/{action=Index}/{id?}");

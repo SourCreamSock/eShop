@@ -13,16 +13,20 @@ namespace WebMVC.Controllers
             _catalogService = catalogService;
         }
 
-        public async Task<IActionResult> Index(long? categoryId = null, long? brandId = null)
+        public async Task<IActionResult> Index(long? categoryId, long? brandId, int? pageIndex)
         {
-            var catalogItems = await _catalogService.GetItems();
+            int pageSize = 9;
+            var response = await _catalogService.GetItems(categoryId, brandId, pageIndex, pageSize: pageSize);
             var catalogCategories = await _catalogService.GetCategories();
             var catalogBrands = await _catalogService.GetBrands();
-            var model = new CatalogViewModel { CatalogItems = catalogItems,
+            var model = new CatalogViewModel {
+                CatalogItems = response.CatalogItems,
                 CatalogBrands = catalogBrands.Select(s => new SelectListItem { Text = s.Name, Value = s.Id.ToString() }),
                 CatalogCategories = catalogCategories.Select(s => new SelectListItem { Text = s.Name, Value = s.Id.ToString() }),
                 CategoryId = categoryId,
-                BrandId = brandId
+                BrandId = brandId,
+                PageIndex = pageIndex ?? 0,
+                PageCount = (int)Math.Ceiling((decimal)response.TotalCount / pageSize)
             };            
             ViewBag.ItemPageUrl = await _catalogService.ItemPageUrl();
             return View(model);

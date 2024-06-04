@@ -67,3 +67,18 @@
 .item-body .item-main-block .item-right-side-info {
   flex-grow: 1;
 }
+
+article.pagination .paginator-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+article.pagination .paginator-container .page-index {
+  font-weight: 600;
+  font-size: 1em;
+  border: 1px solid #009999;
+  background-color: rgba(0, 153, 153, 0.5);
+}
+article.pagination .paginator-container .page-index.page-index-current {
+  border: 2px solid #009999;
+}
