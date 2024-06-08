@@ -1,33 +1,51 @@
 ﻿@model CatalogViewModel
-<article class="pagination">    
+@{
+
+}
+<article class="pagination">
     <nav class="paginator-container">
+        @if (Model.PageIndex - 2 >= 0)
+        {
+            <button data-pageIndex="0" class="page-index" type="button">1</button>
+            <span>...</span>
+        }
         @if (Model.PageIndex - 1 >= 0)
         {
-            <a asp-controller="Catalog"
-               asp-action="Index"
-               asp-route-pageIndex="@(Model.PageIndex-1)">
-                <p class="page-index">@(Model.PageIndex - 1)</p>
-            </a>
+            <button data-pageindex="@(Model.PageIndex - 1)"
+                    type="button" class="page-index">
+                @(Model.PageIndex)
+            </button>
         }
-        @if (Model.PageIndex - 1 >= 0)
-        {                
-            <a asp-controller="Catalog"
-                asp-action="Index"
-                asp-route-pageIndex="@(Model.PageIndex-1)">
-                <p class="page-index">@(Model.PageIndex-1)</p>
-            </a>
-        }
-        <p class="page-index page-index-current">@Model.PageIndex</p>
+        <span class="page-index page-index-current">@(Model.PageIndex + 1)</span>
 
         @if (Model.PageIndex + 1 < Model.PageCount)
-        {            
-            <a asp-controller="Catalog"
-                    asp-action="Index"
-                    asp-route-pageIndex="@(Model.PageIndex+1)">
-                <p class="page-index">@(Model.PageIndex+1)</p>
-            </a>                
+        {
+            <button data-pageindex="@(Model.PageIndex + 1)" type="button" class="page-index">
+                @(Model.PageIndex + 2)
+            </button>
         }
-           
-    </nav>      
-    
+        @if (Model.PageIndex + 2 < Model.PageCount)
+        {
+            <span>...</span>
+            <button data-pageindex="@(Model.PageCount - 1)" type="button" class="page-index">
+                @(Model.PageCount)
+            </button>            
+        }
+
+
+    </nav>
+    <script>
+        var buttons = document.getElementsByClassName("page-index");
+        [...buttons].forEach(el => el.addEventListener("click", event => { 
+            var pageIndex = event.currentTarget.dataset.pageindex;
+            var currentUrl = new URL(window.location.href);
+            if (!currentUrl.searchParams.get("pageIndex"))
+                currentUrl.searchParams.append("pageIndex", pageIndex)
+            else
+                currentUrl.searchParams.set("pageIndex", pageIndex);
+            window.location.href = currentUrl;
+        }))
+       
+
+    </script>
 </article>

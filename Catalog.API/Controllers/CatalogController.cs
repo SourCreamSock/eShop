@@ -23,7 +23,7 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> ItemsAsync([FromQuery] long? categoryId, [FromQuery] long? brandId, 
             [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
         {
-            var queryItems =  _context.CatalogItems.Skip(pageSize * pageIndex).Take(pageSize);
+            var queryItems = _context.CatalogItems.AsQueryable();
             if (categoryId.HasValue)
             {
                 queryItems =  queryItems.Where(w => w.CatalogCategoryId == categoryId.Value);
@@ -32,13 +32,14 @@ namespace Catalog.API.Controllers
             {
                 queryItems = queryItems.Where(w => w.CatalogBrandId == brandId.Value);
             }
-            var items = await queryItems.ToListAsync();
+            
+            var items = await queryItems.Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
             items.ForEach(item => item.PictureUri = _pictureHelper.FullPathToPicture(item.PicturePath));
 
             ItemsViewModel response = new ItemsViewModel
             {
                 CatalogItems = items,
-                TotalCount = await _context.CatalogItems.LongCountAsync()
+                TotalCount = await queryItems.LongCountAsync()
             };
             
             return Ok(response);
