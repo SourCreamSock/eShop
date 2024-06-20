@@ -1,4 +1,5 @@
-﻿using Catalog.API.Infrastructure;
+﻿using AutoMapper;
+using Catalog.API.Infrastructure;
 using Catalog.API.Model.API_Models;
 using Catalog.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,22 @@ namespace Catalog.API.Controllers
     {
         private readonly CatalogContext _context;
         private readonly IPictureHelper _pictureHelper;
-        public CatalogController(CatalogContext context, IPictureHelper pictureHelper) { 
+        private readonly Mapper _mapper;
+        public CatalogController(CatalogContext context, IPictureHelper pictureHelper, Mapper mapper) { 
             _context = context;
             _pictureHelper = pictureHelper;
+            _mapper = mapper;
         }
-
+        /// <summary>
+        /// Получить товары
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="brandId"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ItemsViewModel),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CatalogItemsResponse),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items")]
         public async Task<IActionResult> ItemsAsync([FromQuery] long? categoryId, [FromQuery] long? brandId, 
@@ -36,7 +46,7 @@ namespace Catalog.API.Controllers
             var items = await queryItems.Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
             items.ForEach(item => item.PictureUri = _pictureHelper.FullPathToPicture(item.PicturePath));
 
-            ItemsViewModel response = new ItemsViewModel
+            CatalogItemsResponse response = new CatalogItemsResponse
             {
                 CatalogItems = items,
                 TotalCount = await queryItems.LongCountAsync()
@@ -53,7 +63,7 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> ItemAsync(long id)//а точно FromQuery
         {
 
-            var item = await _context.CatalogItems.FirstOrDefaultAsync(i => i.Id == id);
+            var item = await _context.CatalogItems.SingleOrDefaultAsync(i => i.Id == id);
             if (item != null)
             {
                 item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath);
@@ -63,6 +73,46 @@ namespace Catalog.API.Controllers
                 return NotFound();
 
         }
+        [HttpPost]
+        [Route("items")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> CreateItemAsync([FromBody] CatalogItem item)
+        {
+            _context.CatalogItems.Add(item);    
+            await _context.SaveChangesAsync();
+            var actionName = nameof(ItemAsync);
+            return CreatedAtAction(actionName, item, null);
+        }
+        [HttpDelete]
+        [Route("items/{id:long}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteItemAsync(long id)
+        {
+            var item = await _context.CatalogItems.SingleOrDefaultAsync(s => s.Id == id);
+            if(item == null)
+                return NotFound();
+            _context.CatalogItems.Remove(item);
+            await _context.SaveChangesAsync();
+            return Ok();    
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(CatalogItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Route("items")]
+        public async Task<IActionResult> UpdateItemAsync([FromBody] CatalogItemRequest catalogItemRequest)
+        {
+            var isItemExist = await _context.CatalogItems.AnyAsync(s => s.Id == catalogItemRequest.Id);
+            if (!isItemExist)
+                return NotFound();
+            var dbCatalogItem = _mapper.Map<CatalogItem>(catalogItemRequest);
+            _context.CatalogItems.Update(dbCatalogItem);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(List<CatalogCategory>), StatusCodes.Status200OK)]        
         [Route("categories")]
@@ -86,5 +136,6 @@ namespace Catalog.API.Controllers
             }
             return Ok(brands);
         }
+        
     }
 }

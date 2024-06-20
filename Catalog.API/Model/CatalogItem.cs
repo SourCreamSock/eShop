@@ -16,13 +16,10 @@ namespace Catalog.API.Model
         [Required]
         public long CatalogBrandId { get; set; }
         [Required]
-        public long CatalogCategoryId { get; set; }
-        [JsonIgnore]
-        public string PicturePath { get; set; }
-        public string? PictureUri { get; set; }
-        [JsonIgnore]
-        public CatalogBrand CatalogBrand { get; set; }
-        [JsonIgnore]
+        public long CatalogCategoryId { get; set; }        
+        public string PicturePath { get; set; }        
+        public string? PictureUri { get; set; }        
+        public CatalogBrand CatalogBrand { get; set; }        
         public CatalogCategory CatalogCategory { get; set; }
         //public string PictureUri { get; set; }        
 
