@@ -5,10 +5,11 @@ namespace Catalog.API.Infrastructure
 {
     public class CatalogContext: DbContext
     {
-        public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
+        public CatalogContext(DbContextOptions<CatalogContext> options, bool isUseMigrations) : base(options)
         {
             //Database.EnsureCreated();
-            Database.Migrate();
+            if(isUseMigrations)
+                Database.Migrate();
             //    CatalogItems = catalogItems ?? throw new ArgumentNullException(nameof(catalogItems));
             //    CatalogTypes = catalogTypes ?? throw new ArgumentNullException(nameof(catalogTypes));            
         }

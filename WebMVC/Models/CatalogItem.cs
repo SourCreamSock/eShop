@@ -13,7 +13,6 @@ namespace WebMVC.Models
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
         public string PictureUri { get; set; }
-
     }
     public class CatalogItemDetailed : CatalogItem
     {

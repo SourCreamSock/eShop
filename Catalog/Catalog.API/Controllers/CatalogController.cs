@@ -4,6 +4,7 @@ using Catalog.API.Model.API_Models;
 using Catalog.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 
 namespace Catalog.API.Controllers
@@ -12,8 +13,8 @@ namespace Catalog.API.Controllers
     {
         private readonly CatalogContext _context;
         private readonly IPictureHelper _pictureHelper;
-        private readonly Mapper _mapper;
-        public CatalogController(CatalogContext context, IPictureHelper pictureHelper, Mapper mapper) { 
+        private readonly IMapper _mapper;
+        public CatalogController(CatalogContext context, IPictureHelper pictureHelper, IMapper mapper) { 
             _context = context;
             _pictureHelper = pictureHelper;
             _mapper = mapper;
@@ -43,7 +44,7 @@ namespace Catalog.API.Controllers
                 queryItems = queryItems.Where(w => w.CatalogBrandId == brandId.Value);
             }
             
-            var items = await queryItems.Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
+            var items = await queryItems.Skip(pageSize * pageIndex).Take(pageSize).Select(item=>_mapper.Map<CatalogItemResponse>(item)).ToListAsync();
             items.ForEach(item => item.PictureUri = _pictureHelper.FullPathToPicture(item.PicturePath));
 
             CatalogItemsResponse response = new CatalogItemsResponse
@@ -101,13 +102,13 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(CatalogItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Route("items")]
-        public async Task<IActionResult> UpdateItemAsync([FromBody] CatalogItemRequest catalogItemRequest)
+        [Route("items/{id:long}")]
+        public async Task<IActionResult> UpdateItemAsync(long id,[FromBody] CatalogItemRequest catalogItemRequest)
         {
-            var isItemExist = await _context.CatalogItems.AnyAsync(s => s.Id == catalogItemRequest.Id);
+            var isItemExist = await _context.CatalogItems.AnyAsync(s => s.Id == id);
             if (!isItemExist)
                 return NotFound();
-            var dbCatalogItem = _mapper.Map<CatalogItem>(catalogItemRequest);
+            var dbCatalogItem = _mapper.Map<CatalogItem>(catalogItemRequest);            
             _context.CatalogItems.Update(dbCatalogItem);
             await _context.SaveChangesAsync();
             return Ok();
@@ -116,6 +117,7 @@ namespace Catalog.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<CatalogCategory>), StatusCodes.Status200OK)]        
         [Route("categories")]
+        [SwaggerOperation(Tags = new[] { "Categories"})]
         public async Task<IActionResult> CategoriesAsync()//а точно FromQuery
         {
 
@@ -125,6 +127,7 @@ namespace Catalog.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<CatalogBrand>), StatusCodes.Status200OK)]
         [Route("brands")]
+        [SwaggerOperation(Tags = new[] { "Brands" })]
         public async Task<IActionResult> BrandsAsync(long? categoryId)//а точно FromQuery
         {
 

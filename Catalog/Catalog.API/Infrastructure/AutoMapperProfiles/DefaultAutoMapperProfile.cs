@@ -8,7 +8,7 @@ namespace Catalog.API.Infrastructure.AutoMapperProfiles
     {
         public DefaultAutoMapperProfile()
         {
-            this.CreateMap<CatalogItemRequest, CatalogItem>();
+            this.CreateMap<CatalogItem, CatalogItemResponse>().ReverseMap();
         }
     }
 }

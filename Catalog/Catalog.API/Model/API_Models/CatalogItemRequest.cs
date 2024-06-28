@@ -3,7 +3,7 @@
 namespace Catalog.API.Model.API_Models
 {
     public record class CatalogItemRequest
-    {
+    {        
         public long Id { get; set; }
         [Required]
         public string Name { get; set; }
