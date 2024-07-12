@@ -14,7 +14,7 @@ namespace Catalog.API.Controllers
         private readonly CatalogContext _context;
         private readonly IPictureHelper _pictureHelper;
         private readonly IMapper _mapper;
-        public CatalogController(CatalogContext context, IPictureHelper pictureHelper, IMapper mapper) { 
+        public CatalogController(CatalogContext context, IPictureHelper pictureHelper, IMapper mapper) {
             _context = context;
             _pictureHelper = pictureHelper;
             _mapper = mapper;
@@ -28,12 +28,14 @@ namespace Catalog.API.Controllers
         /// <param name="pageIndex"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(CatalogItemsResponse),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CatalogItemsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items")]
-        public async Task<IActionResult> ItemsAsync([FromQuery] long? categoryId, [FromQuery] long? brandId, 
+        public async Task<IActionResult> ItemsAsync([FromQuery] long? categoryId, [FromQuery] long? brandId,
             [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
         {
+            if (categoryId < 1 || brandId < 1 || pageSize < 1 || pageIndex < 0)
+                return BadRequest();
             var queryItems = _context.CatalogItems.AsQueryable();
             if (categoryId.HasValue)
             {
