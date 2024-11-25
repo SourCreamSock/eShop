@@ -1,7 +1,7 @@
 using Catalog.API.Infrastructure;
 using Catalog.API.Infrastructure.AutoMapperProfiles;
 using Catalog.API.Services;
-using Microsoft.Extensions.Options;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +17,12 @@ builder.Services.AddAutoMapper(typeof(DefaultAutoMapperProfile));
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IPictureHelper, PictureHelper>();
 builder.Services.AddSwaggerGen(options=> {
+    
     var xmlFile = "CatalogApi.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
-    options.EnableAnnotations();
+    options.EnableAnnotations();     
+
 });
 
 var app = builder.Build();
@@ -37,4 +39,3 @@ using (var scope = app.Services.CreateScope())
     await new CatalogContextSeed().SeedAsync(context);
 }
 app.Run();
-

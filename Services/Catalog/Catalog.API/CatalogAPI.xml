@@ -4,7 +4,7 @@
         <name>Catalog.API</name>
     </assembly>
     <members>
-        <member name="M:Catalog.API.Controllers.CatalogController.ItemsAsync(System.Nullable{System.Int64},System.Nullable{System.Int64},System.Int32,System.Int32)">
+        <member name="M:Catalog.API.Controllers.CatalogController.ItemsAsync(Catalog.API.Controllers.CatalogController.ItemFilter)">
             <summary>
             Получить товары
             </summary>
