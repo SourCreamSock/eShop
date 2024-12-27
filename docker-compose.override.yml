@@ -8,13 +8,13 @@ services:
       - MSSQL_SA_PASSWORD=!PasswordOkey
       - ACCEPT_EULA=Y
     volumes:
-      - ./MyDockerData:/var/opt/mssql/data
+      - mssql_server_data:/var/opt/mssql/data
     ports:
       - '5433:1433'
   catalog-api:
     build: 
        context: .
-       dockerfile: Catalog.API/Dockerfile
+       dockerfile: Services/Catalog/Catalog.API/Dockerfile
     environment:              
       - ConnectionStrings__CatalogConnection=Server=sql;Database=Catalogdb;User Id=sa;Password=!PasswordOkey;Encrypt=false;TrustServerCertificate=true;
       - BaseUri=http://host.docker.internal:5002/
@@ -34,6 +34,6 @@ services:
       - SelfUrl=http://host.docker.internal:5003/
     ports:
       - '5003:8080'
-# volumes:
-#     mssql_server_data:  
+volumes:
+    mssql_server_data:  
      

@@ -7,7 +7,7 @@
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <DebugType>Portable</DebugType>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\Artoym\OneDrive\Рабочий стол\MyProjects\EShop\Catalog.API\CatalogAPI.xml</DocumentationFile>
+    <DocumentationFile>CatalogAPI.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
