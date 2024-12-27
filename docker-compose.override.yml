@@ -8,7 +8,7 @@ services:
       - MSSQL_SA_PASSWORD=!PasswordOkey
       - ACCEPT_EULA=Y
     volumes:
-      - ./MyDockerData:/var/opt/mssql/data
+      - mssql_server_data:/var/opt/mssql/data
     ports:
       - '5433:1433'
   catalog-api:
@@ -34,6 +34,6 @@ services:
       - SelfUrl=http://host.docker.internal:5003/
     ports:
       - '5003:8080'
-# volumes:
-#     mssql_server_data:  
+volumes:
+    mssql_server_data:  
      
