@@ -1,18 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Web.Domain.Entities.Catalog;
 
-namespace Catalog.API.Infrastructure
+namespace Web.Persistence.Catalog
 {
-    public class CatalogContext: DbContext
+    public class CatalogContext : DbContext
     {
-        public CatalogContext(DbContextOptions<CatalogContext> options, DbContextCustomSettings dbContextCustomSettings) : base(options)
-        {
-            //Database.EnsureCreated();
-            if(dbContextCustomSettings.IsUseMigrations)
-                Database.Migrate();
-            //    CatalogItems = catalogItems ?? throw new ArgumentNullException(nameof(catalogItems));
-            //    CatalogTypes = catalogTypes ?? throw new ArgumentNullException(nameof(catalogTypes));            
-        }
+        public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
+        {}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CatalogBrand>().ToTable("CatalogBrands").HasKey(k => k.Id);
@@ -27,9 +20,9 @@ namespace Catalog.API.Infrastructure
         public DbSet<CatalogItem> CatalogItems { get; set; }
         public DbSet<CatalogBrand> CatalogBrands { get; set; }
         public DbSet<CatalogCategory> CatalogCategories { get; set; }
-               
+
     }
-  
+
 
 }
 

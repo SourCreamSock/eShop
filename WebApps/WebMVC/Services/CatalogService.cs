@@ -53,7 +53,7 @@ namespace WebMVC.Services
                 throw;
             }
         }
-        public async Task<CatalogItemDetailed> GetItem(long itemId)
+        public async Task<CatalogItemDetailedResponseDto> GetItem(long itemId)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace WebMVC.Services
                 var url = _urlCatalog + $"items/{itemId}";                
                 var response = await _httpClient.GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
-                var item = JsonConvert.DeserializeObject<CatalogItemDetailed>(result);
+                var item = JsonConvert.DeserializeObject<CatalogItemDetailedResponseDto>(result);
                 return item;
             }
             catch (Exception ex)

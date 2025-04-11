@@ -1,7 +1,7 @@
-﻿using Catalog.API.Model;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using Web.Domain.Entities.Catalog;
 
-namespace Catalog.API.Infrastructure
+namespace Web.Persistence.Catalog
 {
     public class CatalogContextSeed
     {

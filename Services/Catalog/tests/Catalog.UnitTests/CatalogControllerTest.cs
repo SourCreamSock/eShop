@@ -94,7 +94,7 @@ namespace Catalog.UnitTests
             var options = optionsBuilder.Options;
             var dbContextCustomSettings = new DbContextCustomSettings { IsUseMigrations = false };
 
-            var catalogContext = new CatalogContext(options, dbContextCustomSettings);
+            var catalogContext = new CatalogContext(options);
             catalogContext.Database.EnsureDeleted();
             var catalogContextSeed = new CatalogContextSeed();
             await catalogContextSeed.SeedAsync(catalogContext);

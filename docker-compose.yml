@@ -19,7 +19,7 @@ services:
       - ConnectionStrings__CatalogConnection=Server=sql;Database=Catalogdb;User Id=sa;Password=!PasswordOkey;Encrypt=false;TrustServerCertificate=true;
       - BaseUri=http://host.docker.internal:5002/
     depends_on:
-      - sql
+      - sql      
     ports:
       - '5002:8080'
   webmvc:
@@ -33,7 +33,7 @@ services:
       - CatalogApiUrl=http://host.docker.internal:5002/
       - SelfUrl=http://host.docker.internal:5003/
     ports:
-      - '5003:8080'
+      - '5003:8080'  
 volumes:
     mssql_server_data:  
      

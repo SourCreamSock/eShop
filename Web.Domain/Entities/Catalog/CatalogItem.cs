@@ -1,21 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Catalog.API.Model
+namespace Web.Domain.Entities.Catalog
 {
     public class CatalogItem
     {        
-        public long Id { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Code { get; set; }
-        [Required]
+        public long Id { get; set; }        
+        public string Name { get; set; }        
+        public string Code { get; set; }        
         public decimal Price { get; set; }
-        public string? Description { get; set; }
-        [Required]
-        public long CatalogBrandId { get; set; }
-        [Required]
+        public string? Description { get; set; }        
+        public long CatalogBrandId { get; set; }        
         public long CatalogCategoryId { get; set; }        
         public string PicturePath { get; set; }                    
         public CatalogBrand CatalogBrand { get; set; }        

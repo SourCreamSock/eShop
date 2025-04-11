@@ -1,4 +1,4 @@
-﻿namespace Catalog.API.Services
+﻿namespace Web.Application.DTOs.Catalog
 {
     public interface IPictureHelper
     {

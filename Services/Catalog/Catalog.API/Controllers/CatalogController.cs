@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using Catalog.API.Infrastructure;
-using Catalog.API.Model.API_Models;
 using Catalog.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Web.Application.DTOs.Catalog;
+using Web.Persistence.Catalog;
 
 namespace Catalog.API.Controllers
 {

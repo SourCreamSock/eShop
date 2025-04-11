@@ -10,7 +10,7 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Catalog.API/Catalog.API.csproj", "Catalog.API/"]
+COPY ["Services/Catalog/Catalog.API/Catalog.API.csproj", "Catalog.API/"]
 RUN dotnet restore "./Catalog.API/./Catalog.API.csproj"
 COPY . .
 WORKDIR "/src/Catalog.API"
