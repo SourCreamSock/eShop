@@ -2,7 +2,7 @@
 
 namespace Web.Application.DTOs.Catalog
 {
-    public record class CatalogItemResponse
+    public record class CatalogItemResponseDto
     {
         public long Id { get; init; }        
         public string Name { get; init; }        
@@ -12,6 +12,6 @@ namespace Web.Application.DTOs.Catalog
         public long CatalogBrandId { get; init; }        
         public long CatalogCategoryId { get; init; }
         public string PicturePath { get; init; }
-        public string? PictureUri { get; init; }
+        public string PictureUri { get; private init; }        
     }
 }

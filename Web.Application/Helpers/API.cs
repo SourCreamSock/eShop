@@ -1,4 +1,4 @@
-﻿namespace WebMVC.Infrastructure
+﻿namespace Web.Application.Helpers
 {
     public class API
     {

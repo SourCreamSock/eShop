@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Web.Application\Web.Application.csproj" />
-    <ProjectReference Include="..\..\..\Web.Domain\Web.Domain.csproj" />
     <ProjectReference Include="..\..\..\Web.Infrastructure\Web.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Web.Persistence\Web.Persistence.csproj" />
   </ItemGroup>

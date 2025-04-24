@@ -16,7 +16,7 @@ builder.Services.AddCatalogContext(conncetionString);
 //});
 builder.Services.AddAutoMapper(typeof(DefaultAutoMapperProfile));
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IPictureHelper, PictureHelper>();
+builder.Services.AddSingleton<IPictureHelper, PictureService>();
 builder.Services.AddSwaggerGen(options=> {
     
     var xmlFile = "CatalogApi.xml";

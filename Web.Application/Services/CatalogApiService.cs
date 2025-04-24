@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Web.Application.Contracts
+namespace Web.Application.Services
 {
-    public interface ICatalogService
+    public class CatalogApiService
     {
 
     }

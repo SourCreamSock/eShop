@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -8,25 +7,25 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
-using WebMVC.Infrastructure;
-using WebMVC.Models;
+using Web.Application.Contracts;
+using Web.Application.DTOs.Catalog;
 
-namespace WebMVC.Services
+namespace Web.Application.Services
 {
-    public class CatalogService
+    public class CatalogWebService : ICatalogWebService
     {
         //private readonly string _GetAllCatalogItems;
         private readonly HttpClient _httpClient;
         private readonly string _urlCatalog;
         private readonly string _selfUrl;
-        public CatalogService(HttpClient httpClient, IConfiguration configuration)
+        public CatalogWebService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _urlCatalog = configuration.GetValue<string>("CatalogApiUrl");
-            _selfUrl = configuration.GetValue<string>("SelfUrl");
+            _urlCatalog = configuration.GetValue<string>("CatalogApiUrl") ?? throw new ArgumentNullException();
+            _selfUrl = configuration.GetValue<string>("SelfUrl") ?? throw new ArgumentNullException();
         }
       
-        public async Task<CatalogItemsResponse> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize = null )
+        public async Task<CatalogItemsResponseDto> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize = null )
         {
             try
             {
@@ -44,7 +43,7 @@ namespace WebMVC.Services
                 uriBuilder.Query = string.Join('&', queryParams.Select(s => s.Key + "=" + s.Value));
                 var response = await _httpClient.GetAsync(uriBuilder.ToString());
                 var result = await response.Content.ReadAsStringAsync();
-                var items = JsonConvert.DeserializeObject<CatalogItemsResponse>(result);
+                var items = JsonConvert.DeserializeObject<CatalogItemsResponseDto>(result);
                 return items;
             }
             catch (Exception ex)
@@ -53,7 +52,7 @@ namespace WebMVC.Services
                 throw;
             }
         }
-        public async Task<CatalogItemDetailedResponseDto> GetItem(long itemId)
+        public async Task<CatalogItemResponseDto> GetItem(long itemId)
         {
             try
             {
@@ -61,7 +60,7 @@ namespace WebMVC.Services
                 var url = _urlCatalog + $"items/{itemId}";                
                 var response = await _httpClient.GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
-                var item = JsonConvert.DeserializeObject<CatalogItemDetailedResponseDto>(result);
+                var item = JsonConvert.DeserializeObject<CatalogItemResponseDto>(result);
                 return item;
             }
             catch (Exception ex)
@@ -69,14 +68,14 @@ namespace WebMVC.Services
                 throw;
             }
         }
-        public async Task<IEnumerable<CatalogCategory>> GetCategories()
+        public async Task<IEnumerable<CatalogCategoryResponseDto>> GetCategories()
         {
             try
             {                
                 var url = _urlCatalog + $"categories";                
                 var response = await _httpClient.GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
-                var items = JsonConvert.DeserializeObject<IEnumerable<CatalogCategory>>(result);
+                var items = JsonConvert.DeserializeObject<IEnumerable<CatalogCategoryResponseDto>>(result);
                 return items;
             }
             catch (Exception ex)
@@ -84,7 +83,7 @@ namespace WebMVC.Services
                 throw;
             }
         }
-        public async Task<IEnumerable<CatalogBrand>> GetBrands(long? categoryId = null)
+        public async Task<IEnumerable<CatalogBrandResponseDto>> GetBrands(long? categoryId = null)
         {
             try
             {
@@ -93,7 +92,7 @@ namespace WebMVC.Services
                     url += $"?categoryId={categoryId}";
                 var response = await _httpClient.GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
-                var items = JsonConvert.DeserializeObject<IEnumerable<CatalogBrand>>(result);
+                var items = JsonConvert.DeserializeObject<IEnumerable<CatalogBrandResponseDto>>(result);
                 return items;
             }
             catch (Exception ex)
@@ -105,6 +104,5 @@ namespace WebMVC.Services
         {
             return _selfUrl + "Catalog/CatalogItem/";
         }
-
     }
 }

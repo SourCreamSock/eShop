@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Web.Persistence.Catalog
 {
-    public static class ServiceExtensions
+    public static class PersistanceServiceExtensions
     {
         public static void AddCatalogContext(this IServiceCollection collection, string catalogDbConnectionString)
         {
@@ -21,6 +21,7 @@ namespace Web.Persistence.Catalog
                 catalogContext.Database.Migrate();
             }            
         }
-        public static void Add
+        
+        //public static void Add
     }
 }

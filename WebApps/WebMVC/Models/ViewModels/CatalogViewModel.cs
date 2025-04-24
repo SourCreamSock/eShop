@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Web.Application.DTOs.Catalog;
 
 namespace WebMVC.Models.ViewModels
 {

@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Web.Application.DTOs.Catalog;
+using Web.Application.Services;
 using WebMVC.Models;
 using WebMVC.Models.ViewModels;
-using WebMVC.Services;
 
 namespace WebMVC.Controllers
 {
     public class CatalogController: Controller
     {
-        private CatalogService _catalogService;
-        public CatalogController(CatalogService catalogService ) { 
+        private CatalogWebService _catalogService;
+        public CatalogController(CatalogWebService catalogService ) { 
             _catalogService = catalogService;
         }
 
@@ -37,13 +38,13 @@ namespace WebMVC.Controllers
             return View(catalogItemDetailed);
         }
         [HttpGet]
-        public async Task<IEnumerable<CatalogCategory>> GetCatalogCategories()
+        public async Task<IEnumerable<CatalogCategoryResponseDto>> GetCatalogCategories()
         {
             var items = await _catalogService.GetCategories();
             return items;
         }
         [HttpGet]
-        public async Task<IEnumerable<CatalogBrand>> GetCatalogBrands(long? categoryId)
+        public async Task<IEnumerable<CatalogBrandResponseDto>> GetCatalogBrands(long? categoryId)
         {
             var items = await _catalogService.GetBrands(categoryId);
             return items;

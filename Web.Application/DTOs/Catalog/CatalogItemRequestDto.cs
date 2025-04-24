@@ -2,7 +2,7 @@
 
 namespace Web.Application.DTOs.Catalog
 {
-    public record class CatalogItemRequest
+    public record class CatalogItemRequestDto
     {        
         public long Id { get; init; }
         [Required]
