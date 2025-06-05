@@ -1,10 +1,10 @@
 ﻿ using AutoMapper;
-using Catalog.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
 using Web.Domain.Entities.Catalog;
 using Web.Persistence.Catalog;

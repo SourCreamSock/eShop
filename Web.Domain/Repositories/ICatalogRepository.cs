@@ -1,41 +1,26 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using Web.Domain.Entities.Catalog;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Web.Domain.Entities.Catalog;
 
-//namespace Web.Domain.Repositories
-//{
-//    public class CatalogRepository
-//    {
-//        public CatalogItem GetByIdAsync(long id)
-//        {
+namespace Web.Domain.Repositories
+{
+    public interface ICatalogRepositoryAsync
+    {
+        Task<CatalogItem?> GetItemByIdAsync(long id);
+        IQueryable<CatalogItem> GetAllItemsQueryAsync();
 
-//        }
-//        public CatalogItem GetByIdAsync(long id)
-//        {
+        Task<IList<CatalogItem>> GetAllItemsAsync();
 
-//        }
-//        public CatalogItem GetByIdAsync(long id)
-//        {
+        Task<CatalogItem> AddAsync(CatalogItem item);
 
-//        }
-//        public CatalogItem GetByIdAsync(long id)
-//        {
+        void Update(CatalogItem item);
 
-//        }
-//        public CatalogItem GetByIdAsync(long id)
-//        {
+        void Delete(CatalogItem item);
 
-//        }
-//        public CatalogItem GetByIdAsync(long id)
-//        {
-
-//        }
-//        public CatalogItem GetByIdAsync(long id)
-//        {
-
-//        }
-//    }
-//}
+        void DeleteRange(IList<CatalogItem> items);
+        
+    }
+}

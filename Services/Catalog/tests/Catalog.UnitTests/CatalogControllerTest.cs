@@ -1,12 +1,13 @@
 using AutoMapper;
 using Catalog.API.Controllers;
-using Catalog.API.Infrastructure;
-using Catalog.API.Infrastructure.AutoMapperProfiles;
-using Catalog.API.Model.API_Models;
-using Catalog.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Web.Application.Contracts;
+using Web.Application.DTOs.Catalog;
+using Web.Infrastructure.Mappers;
+using Web.Infrastructure.Mappers.AutoMapperProfiles;
+using Web.Persistence.Catalog;
 
 namespace Catalog.UnitTests
 {
@@ -58,7 +59,7 @@ namespace Catalog.UnitTests
 
             Assert.NotNull(actionResult);
             var okObjectResult = Assert.IsAssignableFrom<OkObjectResult>(actionResult);
-            var catalogItemsResponse = Assert.IsAssignableFrom<CatalogItemsResponse>(okObjectResult.Value);
+            var catalogItemsResponse = Assert.IsAssignableFrom<CatalogItemsResponseDto>(okObjectResult.Value);
             Assert.Equal(expectedTotalCount, catalogItemsResponse.TotalCount);
         }
         [Theory]
@@ -92,8 +93,6 @@ namespace Catalog.UnitTests
             var optionsBuilder = new DbContextOptionsBuilder<CatalogContext>()
                       .UseInMemoryDatabase("testDataBase");
             var options = optionsBuilder.Options;
-            var dbContextCustomSettings = new DbContextCustomSettings { IsUseMigrations = false };
-
             var catalogContext = new CatalogContext(options);
             catalogContext.Database.EnsureDeleted();
             var catalogContextSeed = new CatalogContextSeed();
@@ -101,15 +100,13 @@ namespace Catalog.UnitTests
             return catalogContext;
         }
         public static async Task<CatalogController> CreateCatalogControllerTest(CatalogContext catalogContext)
-        {
-            var defaultProfile = new DefaultAutoMapperProfile();
-            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(defaultProfile));
-            var mapper = new Mapper(configuration);
+        {            
+            var mapper = MapperHelper.CreateDefaultMapper();
 
-            var pictureHelperMock = new Mock<IPictureHelper>();
-            pictureHelperMock.Setup(s => s.FullPathToPicture(It.IsAny<string>())).Returns<string>(value => value);
+            var pictureServiceMock = new Mock<IPictureService>();
+            pictureServiceMock.Setup(s => s.FullPathToPicture(It.IsAny<string>())).Returns<string>(value => value);
 
-            var testCatalogController = new CatalogController(catalogContext, pictureHelperMock.Object, mapper);
+            var testCatalogController = new CatalogController(catalogContext, pictureServiceMock.Object, mapper);
             return testCatalogController;
         }
         //~TestingEntities()

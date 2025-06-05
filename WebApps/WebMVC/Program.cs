@@ -1,7 +1,7 @@
-using WebMVC.Services;
+using Web.Application.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient<CatalogWebService>();
+builder.Services.AddHttpClient<ICatalogWebService>();
 builder.Services.AddControllersWithViews(); 
 
 var app = builder.Build();

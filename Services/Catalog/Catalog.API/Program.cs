@@ -1,7 +1,6 @@
-using Catalog.API.Infrastructure;
-using Catalog.API.Infrastructure.AutoMapperProfiles;
-using Catalog.API.Services;
 using Web.Persistence.Catalog;
+using Web.Infrastructure.Mappers;
+using Web.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +13,9 @@ builder.Services.AddCatalogContext(conncetionString);
 //    );
 //    /*builder=> builder.EnableRetryOnFailure(2,TimeSpan.FromSeconds(5),null)*/
 //});
-builder.Services.AddAutoMapper(typeof(DefaultAutoMapperProfile));
+builder.Services.AddDefaultMapper();
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IPictureHelper, PictureService>();
+builder.Services.AddApplicationServicesForApi();
 builder.Services.AddSwaggerGen(options=> {
     
     var xmlFile = "CatalogApi.xml";
@@ -40,8 +39,4 @@ app.UseSwagger().UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); 
 });
 
-using (var scope = app.Services.CreateScope())
-{
-    
-}
 app.Run();

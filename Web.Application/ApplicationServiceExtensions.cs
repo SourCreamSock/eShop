@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
 using Web.Application.Services;
 

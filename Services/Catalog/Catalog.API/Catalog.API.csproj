@@ -10,8 +10,7 @@
     <DocumentationFile>CatalogAPI.xml</DocumentationFile>
   </PropertyGroup>
   
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />  
+  <ItemGroup>    
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.2" />
@@ -32,8 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\API_Models\" />
-    <Folder Include="Services\" />
+    <Folder Include="Infrastructure\" />
   </ItemGroup>
   
 
