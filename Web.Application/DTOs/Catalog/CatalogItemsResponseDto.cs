@@ -5,7 +5,7 @@ namespace Web.Application.DTOs.Catalog
 {
     public record class CatalogItemsResponseDto
     {
-        public List<CatalogItemResponseDto> CatalogItems { get; init; }
+        public IList<CatalogItemResponseDto> CatalogItems { get; init; }
         public long TotalCount { get; init; } 
     }
 }

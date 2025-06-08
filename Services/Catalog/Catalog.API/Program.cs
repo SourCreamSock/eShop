@@ -1,6 +1,6 @@
 using Web.Persistence.Catalog;
-using Web.Infrastructure.Mappers;
 using Web.Application;
+using Web.Application.Mappers.AutoMapperProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +13,9 @@ builder.Services.AddCatalogContext(conncetionString);
 //    );
 //    /*builder=> builder.EnableRetryOnFailure(2,TimeSpan.FromSeconds(5),null)*/
 //});
-builder.Services.AddDefaultMapper();
+builder.Services.AddAutoMapper(typeof(DefaultAutoMapperProfile));
 builder.Services.AddControllers();
-builder.Services.AddApplicationServicesForApi();
+builder.Services.AddCatalogServices();
 builder.Services.AddSwaggerGen(options=> {
     
     var xmlFile = "CatalogApi.xml";

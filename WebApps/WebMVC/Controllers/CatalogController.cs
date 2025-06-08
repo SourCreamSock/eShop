@@ -9,8 +9,8 @@ namespace WebMVC.Controllers
 {
     public class CatalogController: Controller
     {
-        private CatalogWebService _catalogService;
-        public CatalogController(CatalogWebService catalogService ) { 
+        private CatalogApiClientService _catalogService;
+        public CatalogController(CatalogApiClientService catalogService ) { 
             _catalogService = catalogService;
         }
 

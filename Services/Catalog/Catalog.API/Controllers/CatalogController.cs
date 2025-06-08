@@ -1,4 +1,5 @@
 ﻿ using AutoMapper;
+using Catalog.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,13 +14,12 @@ namespace Catalog.API.Controllers
 {
     public class CatalogController : ControllerBase
     {
-        private readonly CatalogContext _context;
-        private readonly IPictureService _pictureHelper;
+        private readonly ICatalogService _catalogService;
         private readonly IMapper _mapper;
-        public CatalogController(CatalogContext context, IPictureService pictureHelper, IMapper mapper) {
-            _context = context;
-            _pictureHelper = pictureHelper;
-            _mapper = mapper;
+        public CatalogController(ICatalogService catalogService, IMapper mapper)
+        {
+            _catalogService = catalogService;
+            _mapper = mapper;          
         }
         /// <summary>
         /// Получить товары
@@ -33,33 +33,18 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(CatalogItemsResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items")]
-        public async Task<IActionResult> ItemsAsync([FromQuery] ItemFilter filter)
+        public async Task<IActionResult> ItemsAsync([FromQuery] GetItemsFilter filter)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var queryItems = _context.CatalogItems.AsQueryable();
-            if (filter.CategoryId.HasValue)
-            {
-                queryItems =  queryItems.Where(w => w.CatalogCategoryId == filter.CategoryId.Value);
-            }
-            if (filter.BrandId.HasValue)
-            {
-                queryItems = queryItems.Where(w => w.CatalogBrandId == filter.BrandId.Value);
-            }
 
-            var dbItems = await queryItems
-                .Skip(filter.PageSize * filter.PageIndex)
-                .Take(filter.PageSize)
-                .AsNoTracking()
-                .ToListAsync();
-            dbItems.ForEach(item => item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath));
-
-            var responseItems = dbItems.Select(s => _mapper.Map<CatalogItemResponseDto>(s)).ToList();            
-
+            var mappedFilter = _mapper.Map<Web.Application.Services.CatalogService.GetItemsFilter>(filter);
+            var catalogItems = await _catalogService.GetItemsAsync(mappedFilter);
+            var catalogDtoItems = _mapper.Map<IList<CatalogItemResponseDto>>(catalogItems);
             CatalogItemsResponseDto response = new CatalogItemsResponseDto
             {
-                CatalogItems = responseItems,
-                TotalCount = await queryItems.LongCountAsync()
+                CatalogItems = catalogDtoItems,
+                TotalCount =  catalogDtoItems.Count()
             };
             
             return Ok(response);
@@ -148,27 +133,6 @@ namespace Catalog.API.Controllers
             }
             return Ok(brands);
         }
-        public class ItemFilter
-        {
-            public ItemFilter(long? categoryId, long? brandId, int pageSize, int pageIndex)
-            {
-                CategoryId = categoryId;
-                BrandId = brandId;
-                PageSize = pageSize;
-                PageIndex = pageIndex;
-            }
-
-            [Range(1, long.MaxValue, ErrorMessage = "Category ID must be greater than or equal to 1.")]
-            public long? CategoryId { get; set; }
-
-            [Range(1, long.MaxValue, ErrorMessage = "Brand ID must be greater than or equal to 1.")]
-            public long? BrandId { get; set; }
-
-            [Range(1, int.MaxValue, ErrorMessage = "Page size must be greater than or equal to 1.")]
-            public int PageSize { get; set; } = 10;
-
-            [Range(0, int.MaxValue, ErrorMessage = "Page index must be greater than or equal to 0.")]
-            public int PageIndex { get; set; } = 0;
-        }
+       
     }
 }

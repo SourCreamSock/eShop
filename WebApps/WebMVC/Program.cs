@@ -1,7 +1,7 @@
 using Web.Application.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient<ICatalogWebService>();
+builder.Services.AddHttpClient<ICatalogService>();
 builder.Services.AddControllersWithViews(); 
 
 var app = builder.Build();

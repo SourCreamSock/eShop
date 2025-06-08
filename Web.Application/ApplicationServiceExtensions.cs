@@ -6,27 +6,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
+using Web.Application.Mappers.AutoMapperProfiles;
 using Web.Application.Services;
 
 namespace Web.Application
 {
     public static class ApplicationServiceExtensions
-    {
-        private static void AddGeneralServices()
-        {
-
-        }
-        public static void AddApplicationServicesForWeb(this IServiceCollection serviceCollection)
+    {       
+        public static void AddCatalogApiClientServices(this IServiceCollection serviceCollection)
         {
             
         }
-        public static void AddApplicationServicesForApi(this IServiceCollection serviceCollection)
+        public static void AddCatalogServices(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<IPictureService, PictureService>();
+            serviceCollection.AddScoped<ICatalogService, CatalogService>();
+            serviceCollection.AddScoped<IPictureService, PictureService>();            
         }
-        public static void AddAutoMapper()
-        {
-
-        }
+        //public static void AddCatalogMapper(this IServiceCollection serviceCollection)
+        //{
+        //    serviceCollection.AddAutoMapper(typeof(DefaultAutoMapperProfile));
+        //}
     }
 }

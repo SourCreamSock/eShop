@@ -55,7 +55,7 @@ namespace Catalog.UnitTests
         {
             var testEntites = await TestingEntities.CreateTestingEntities();
             var testCatalogController = testEntites.TestCatalogController;
-            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.ItemFilter(categoryId, brandId, pageSize, pageIndex));
+            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.GetItemsFilter(categoryId, brandId, pageSize, pageIndex));
 
             Assert.NotNull(actionResult);
             var okObjectResult = Assert.IsAssignableFrom<OkObjectResult>(actionResult);
@@ -68,7 +68,7 @@ namespace Catalog.UnitTests
         {
             var testEntites = await TestingEntities.CreateTestingEntities();
             var testCatalogController = testEntites.TestCatalogController;
-            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.ItemFilter(categoryId, brandId, pageSize, pageIndex));
+            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.GetItemsFilter(categoryId, brandId, pageSize, pageIndex));
 
             Assert.IsType<BadRequestResult>(actionResult);
         }

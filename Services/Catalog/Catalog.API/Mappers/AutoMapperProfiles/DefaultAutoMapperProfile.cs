@@ -10,6 +10,7 @@ namespace Web.Application.Mappers.AutoMapperProfiles
         public DefaultAutoMapperProfile()
         {
             this.CreateMap<CatalogItem, CatalogItemResponseDto>().ReverseMap();
+            this.CreateMap<Catalog.API.Models.GetItemsFilter, Web.Application.Services.CatalogService.GetItemsFilter>().ReverseMap();
         }
     }
 }
