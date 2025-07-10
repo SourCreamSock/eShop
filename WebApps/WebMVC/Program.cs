@@ -1,8 +1,10 @@
+using Web.Application;
 using Web.Application.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient<ICatalogService>();
 builder.Services.AddControllersWithViews(); 
+builder.Services.AddCatalogApiClientServices();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

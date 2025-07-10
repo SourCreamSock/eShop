@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catalog.API.Models
+namespace Web.Application.DTOs.Catalog
 {
-    public class GetItemsFilter
+    public class GetItemsFilterDto
     {
-        public GetItemsFilter(long? categoryId, long? brandId, int pageSize, int pageIndex)
+        public GetItemsFilterDto(long? categoryId, long? brandId, int pageSize, int pageIndex)
         {
             CategoryId = categoryId;
             BrandId = brandId;

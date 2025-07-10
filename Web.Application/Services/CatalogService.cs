@@ -21,14 +21,23 @@ namespace Web.Application.Services
         private readonly IPictureService _pictureHelper;
         private readonly IMapper _mapper;
         private readonly ICatalogRepositoryAsync _catalogRepository;
-        public CatalogService(CatalogContext context, ICatalogRepositoryAsync catalogRepository, IPictureService pictureHelper, IMapper mapper)
+        private readonly ICatalogCategoriesRepositoryAsync _categoriesRepository;
+        private readonly ICatalogBrandRepositoryAsync _brandRepository;
+        public CatalogService(CatalogContext context, 
+            ICatalogRepositoryAsync catalogRepository,
+            ICatalogCategoriesRepositoryAsync categoriesRepository,
+            ICatalogBrandRepositoryAsync brandRepository, 
+            IPictureService pictureHelper,
+            IMapper mapper)
         {
             _context = context;
             _pictureHelper = pictureHelper;
             _mapper = mapper;
+            _categoriesRepository = categoriesRepository;
+            _catalogRepository = catalogRepository;
         }
 
-        public async Task<IList<CatalogItem>> GetItemsAsync(GetItemsFilter filter)
+        public async Task<CatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter)
         {
             var queryItems = _catalogRepository.GetAllItemsQueryAsync();
             if (filter.CategoryId.HasValue)
@@ -47,15 +56,64 @@ namespace Web.Application.Services
                 .ToListAsync();
             dbItems.ForEach(item => item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath));
 
-            var responseItems = dbItems.ToList();
-            return responseItems;
+            var responseItems = dbItems.Select(s => _mapper.Map<CatalogItemResponseDto>(s)).ToList();                        
+            CatalogItemsResponseDto response = new CatalogItemsResponseDto
+            {
+                CatalogItems = responseItems,
+                TotalCount = responseItems.Count()
+            };
+            return response;
         }
-        public class GetItemsFilter
+        public async Task<CatalogItem> GetItemByIdAsync(long id)
         {
-            public long? CategoryId { get; set; }
-            public long? BrandId { get; set; }            
-            public int PageSize { get; set; }             
-            public int PageIndex { get; set; }
+            var item = await _catalogRepository.GetItemByIdAsync(id);      
+            if (item != null)
+                item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath);
+            return item;
+        }
+        public async Task<CatalogItem> AddItem(CatalogItemCreateRequestDto dto)
+        {            
+            var newItem = _mapper.Map<CatalogItem>(dto);
+            newItem = await _catalogRepository.AddAsync(newItem);            
+            await _context.SaveChangesAsync();
+            return newItem;
+        }
+        public async Task UpdateItem(CatalogItemUpdateRequestDto dto)
+        {
+            var item = _mapper.Map<CatalogItem>(dto);
+            _catalogRepository.Update(item);            
+            await _context.SaveChangesAsync();
+        }         
+        public async Task DeleteItem(long itemId)
+        {
+            var item = await _catalogRepository.GetItemByIdAsync(itemId);
+            _catalogRepository.Delete(item);
+            await _context.SaveChangesAsync();            
+        }
+
+        public async Task<IList<CatalogCategoryResponseDto>> GetCategoriesAsync()
+        {
+            var categories =  _categoriesRepository.GetAllCategoriesQueryAsync();
+            var mappedCategories = await categories.Select(s => _mapper.Map<CatalogCategoryResponseDto>(s)).ToListAsync();
+            return mappedCategories;
+        }
+
+        public async Task<IList<CatalogBrandResponseDto>> GetBrandsAsync(long? categoryId)
+        {
+            var brands = _brandRepository.GetAllBrandsQueryAsync();
+            if (categoryId.HasValue)
+            {
+                var allowedBrandIds = await _catalogRepository.GetAllItemsQueryAsync()
+                    .Where(w => w.CatalogCategoryId == categoryId)
+                    .Select(f => f.CatalogBrandId)
+                    .Distinct()
+                    .ToListAsync();
+                brands = brands.Where(brand => allowedBrandIds.Contains(brand.Id));
+                    
+            }
+            var mappedBrands = await brands.Select(brand => _mapper.Map<CatalogBrandResponseDto>(brand))
+                    .ToListAsync();
+            return mappedBrands;
         }
     }
 }

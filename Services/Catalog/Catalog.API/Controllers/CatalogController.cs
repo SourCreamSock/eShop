@@ -9,6 +9,7 @@ using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
 using Web.Domain.Entities.Catalog;
 using Web.Persistence.Catalog;
+using static Web.Application.Services.CatalogService;
 
 namespace Catalog.API.Controllers
 {
@@ -33,20 +34,13 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(CatalogItemsResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items")]
-        public async Task<IActionResult> ItemsAsync([FromQuery] GetItemsFilter filter)
+        public async Task<IActionResult> ItemsAsync([FromQuery] GetItemsFilterDto filter)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var mappedFilter = _mapper.Map<Web.Application.Services.CatalogService.GetItemsFilter>(filter);
-            var catalogItems = await _catalogService.GetItemsAsync(mappedFilter);
-            var catalogDtoItems = _mapper.Map<IList<CatalogItemResponseDto>>(catalogItems);
-            CatalogItemsResponseDto response = new CatalogItemsResponseDto
-            {
-                CatalogItems = catalogDtoItems,
-                TotalCount =  catalogDtoItems.Count()
-            };
             
+            CatalogItemsResponseDto response = await _catalogService.GetItemsAsync(filter);
+
             return Ok(response);
         }
 
@@ -58,12 +52,9 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> ItemAsync(long id)//а точно FromQuery
         {
 
-            var item = await _context.CatalogItems.SingleOrDefaultAsync(i => i.Id == id);
-            if (item != null)
-            {
-                item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath);
-                return Ok(item);
-            }
+            var item = await _catalogService.GetItemByIdAsync(id);
+            if (item != null)                            
+                return Ok(item);            
             else
                 return NotFound();
 
@@ -71,12 +62,11 @@ namespace Catalog.API.Controllers
         [HttpPost]
         [Route("items")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> CreateItemAsync([FromBody] CatalogItem item)
+        public async Task<IActionResult> CreateItemAsync([FromBody] CatalogItemCreateRequestDto item)
         {
-            _context.CatalogItems.Add(item);    
-            await _context.SaveChangesAsync();
+            var newItem = await _catalogService.AddItem(item);
             var actionName = nameof(ItemAsync);
-            return CreatedAtAction(actionName, item, null);
+            return CreatedAtAction(actionName, newItem, null);
         }
         [HttpDelete]
         [Route("items/{id:long}")]
@@ -84,11 +74,7 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteItemAsync(long id)
         {
-            var item = await _context.CatalogItems.SingleOrDefaultAsync(s => s.Id == id);
-            if(item == null)
-                return NotFound();
-            _context.CatalogItems.Remove(item);
-            await _context.SaveChangesAsync();
+            await _catalogService.DeleteItem(id);
             return Ok();    
         }
 
@@ -97,14 +83,12 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items/{id:long}")]
-        public async Task<IActionResult> UpdateItemAsync(long id,[FromBody] CatalogItemRequestDto catalogItemRequest)
+        public async Task<IActionResult> UpdateItemAsync(long id,[FromBody] CatalogItemUpdateRequestDto catalogItemRequest)
         {
-            var isItemExist = await _context.CatalogItems.AnyAsync(s => s.Id == id);
-            if (!isItemExist)
+            var dbItem = await _catalogService.GetItemByIdAsync(id);
+            if (dbItem == null)
                 return NotFound();
-            var dbCatalogItem = _mapper.Map<CatalogItem>(catalogItemRequest);            
-            _context.CatalogItems.Update(dbCatalogItem);
-            await _context.SaveChangesAsync();
+            await _catalogService.UpdateItem(catalogItemRequest);            
             return Ok();
         }
 
@@ -115,7 +99,7 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> CategoriesAsync()//а точно FromQuery
         {
 
-            var categories = await _context.CatalogCategories.ToListAsync();
+            var categories = await _catalogService.GetCategoriesAsync();
             return Ok(categories);
         }
         [HttpGet]
@@ -125,12 +109,7 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> BrandsAsync(long? categoryId)//а точно FromQuery
         {
 
-            var brands = await _context.CatalogBrands.ToListAsync();
-            if (categoryId.HasValue)
-            {
-                var allowedBrandIds = await _context.CatalogItems.Where(w => w.CatalogCategoryId == categoryId).Select(f => f.CatalogBrandId).Distinct().ToListAsync();
-                brands = brands.Where(brand => allowedBrandIds.Contains(brand.Id)).ToList();
-            }
+            var brands = _catalogService.GetBrandsAsync(categoryId);
             return Ok(brands);
         }
        

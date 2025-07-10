@@ -29,10 +29,6 @@
     <ProjectReference Include="..\..\..\Web.Infrastructure\Web.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Web.Persistence\Web.Persistence.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\" />
-  </ItemGroup>
   
 
 </Project>

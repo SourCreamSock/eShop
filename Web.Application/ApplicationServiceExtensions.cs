@@ -15,7 +15,7 @@ namespace Web.Application
     {       
         public static void AddCatalogApiClientServices(this IServiceCollection serviceCollection)
         {
-            
+            serviceCollection.AddScoped<ICatalogApiClientService, CatalogApiClientService>();
         }
         public static void AddCatalogServices(this IServiceCollection serviceCollection)
         {
