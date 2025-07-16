@@ -4,7 +4,7 @@
         <name>Catalog.API</name>
     </assembly>
     <members>
-        <member name="M:Catalog.API.Controllers.CatalogController.ItemsAsync(Catalog.API.Controllers.CatalogController.ItemFilter)">
+        <member name="M:Catalog.API.Controllers.CatalogController.ItemsAsync(Web.Application.DTOs.Catalog.GetItemsFilterDto)">
             <summary>
             Получить товары
             </summary>
@@ -13,66 +13,6 @@
             <param name="pageSize"></param>
             <param name="pageIndex"></param>
             <returns></returns>
-        </member>
-        <member name="T:Catalog.API.Migrations.withoutEAV">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.withoutEAV.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.withoutEAV.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.withoutEAV.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Catalog.API.Migrations.addPictures">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addPictures.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addPictures.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addPictures.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Catalog.API.Migrations.addDescriptionToItems">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addDescriptionToItems.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addDescriptionToItems.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addDescriptionToItems.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Catalog.API.Migrations.addCatalogItemPathUri">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addCatalogItemPathUri.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addCatalogItemPathUri.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.addCatalogItemPathUri.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Catalog.API.Migrations.nullableProperties">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.nullableProperties.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.nullableProperties.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Catalog.API.Migrations.nullableProperties.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
         </member>
     </members>
 </doc>

@@ -1,5 +1,4 @@
 ﻿ using AutoMapper;
-using Catalog.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;

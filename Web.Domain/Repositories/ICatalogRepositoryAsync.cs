@@ -10,7 +10,7 @@ namespace Web.Domain.Repositories
     public interface ICatalogRepositoryAsync
     {
         Task<CatalogItem?> GetItemByIdAsync(long id);
-        IQueryable<CatalogItem> GetAllItemsQueryAsync();
+        IQueryable<CatalogItem> GetAllItemsQuery();
 
         Task<IList<CatalogItem>> GetAllItemsAsync();
 

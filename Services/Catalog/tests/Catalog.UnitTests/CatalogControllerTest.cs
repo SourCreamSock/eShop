@@ -5,8 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
-using Web.Infrastructure.Mappers;
-using Web.Infrastructure.Mappers.AutoMapperProfiles;
+using Web.Application.Mappers.AutoMapperProfiles;
 using Web.Persistence.Catalog;
 
 namespace Catalog.UnitTests
@@ -32,8 +31,13 @@ namespace Catalog.UnitTests
         [InlineData(1L)]
         public async Task Delete_catalog_items_success(long itemId)
         {
-            var testEntites = await TestingEntities.CreateTestingEntities();
-            var testCatalogController = testEntites.TestCatalogController;            
+            var catalogServiceMock = new Mock<ICatalogService>();
+            catalogServiceMock.Setup(s => s.DeleteItem(It.IsAny<long>())).Returns<Task>(value => value);
+            var testCatalogController = await TestingEntities.CreateCatalogControllerTest(catalogServiceMock);
+            var actionResult = await testCatalogController.DeleteItemAsync(itemId);
+
+            Assert.NotNull(actionResult);
+            Assert.IsAssignableFrom<OkObjectResult>(actionResult);                        
         }
 
         //[Theory]
@@ -53,9 +57,10 @@ namespace Catalog.UnitTests
         [InlineData(null, null, 40, 0, 40L)]
         public async Task Get_catalog_items_success(long? categoryId, long? brandId, int pageSize, int pageIndex, long expectedTotalCount)
         {
-            var testEntites = await TestingEntities.CreateTestingEntities();
-            var testCatalogController = testEntites.TestCatalogController;
-            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.GetItemsFilter(categoryId, brandId, pageSize, pageIndex));
+            var catalogServiceMock = new Mock<ICatalogService>();
+            catalogServiceMock.Setup(s => s.GetItemsAsync(It.IsAny<GetItemsFilterDto>())).Returns<Task<CatalogItemsResponseDto>>(value => value);
+            var testCatalogController = await TestingEntities.CreateCatalogControllerTest(catalogServiceMock);
+            var actionResult = await testCatalogController.ItemsAsync(new GetItemsFilterDto(categoryId, brandId, pageSize, pageIndex));
 
             Assert.NotNull(actionResult);
             var okObjectResult = Assert.IsAssignableFrom<OkObjectResult>(actionResult);
@@ -66,47 +71,25 @@ namespace Catalog.UnitTests
         [InlineData(-1L, -1L, -1, -1)]
         public async Task Get_catalog_items_with_wrong_parameters_is_badrequest(long? categoryId, long? brandId, int pageSize, int pageIndex)
         {
-            var testEntites = await TestingEntities.CreateTestingEntities();
-            var testCatalogController = testEntites.TestCatalogController;
-            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.GetItemsFilter(categoryId, brandId, pageSize, pageIndex));
+            var catalogServiceMock = new Mock<ICatalogService>();
+            //catalogServiceMock.Setup(s => s.GetItemsAsync(It.IsAny<GetItemsFilterDto>())).Returns<Task<CatalogItemsResponseDto>>(value => value);
+
+            var testCatalogController = await TestingEntities.CreateCatalogControllerTest(catalogServiceMock);
+            var actionResult = await testCatalogController.ItemsAsync(new GetItemsFilterDto(categoryId, brandId, pageSize, pageIndex));
 
             Assert.IsType<BadRequestResult>(actionResult);
         }
         
     }
-    public class TestingEntities
-    {
-        public  CatalogContext CatalogContext { get; set; }
-        public CatalogController TestCatalogController { get; set; }
-        private TestingEntities(CatalogContext catalogContext, CatalogController catalogController) {
-            CatalogContext = catalogContext;
-            TestCatalogController = catalogController;
-        }
-        public async static Task<TestingEntities> CreateTestingEntities()
+    public static class TestingEntities
+    {                
+        public static async Task<CatalogController> CreateCatalogControllerTest(Mock<ICatalogService> catalogServiceMock)
         {
-            var catalogContext = await CreateTestCatalogContext();
-            var catalogController = await CreateCatalogControllerTest(catalogContext);
-            return new TestingEntities(catalogContext, catalogController);
-        }
-        public static async Task<CatalogContext> CreateTestCatalogContext()
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<CatalogContext>()
-                      .UseInMemoryDatabase("testDataBase");
-            var options = optionsBuilder.Options;
-            var catalogContext = new CatalogContext(options);
-            catalogContext.Database.EnsureDeleted();
-            var catalogContextSeed = new CatalogContextSeed();
-            await catalogContextSeed.SeedAsync(catalogContext);
-            return catalogContext;
-        }
-        public static async Task<CatalogController> CreateCatalogControllerTest(CatalogContext catalogContext)
-        {            
-            var mapper = MapperHelper.CreateDefaultMapper();
+            var defaultProfile = new DefaultAutoMapperProfile();
+            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(defaultProfile));
+            var mapper = new Mapper(configuration);
 
-            var pictureServiceMock = new Mock<IPictureService>();
-            pictureServiceMock.Setup(s => s.FullPathToPicture(It.IsAny<string>())).Returns<string>(value => value);
-
-            var testCatalogController = new CatalogController(catalogContext, pictureServiceMock.Object, mapper);
+            var testCatalogController = new CatalogController(catalogServiceMock.Object, mapper);
             return testCatalogController;
         }
         //~TestingEntities()

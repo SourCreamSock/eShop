@@ -39,7 +39,7 @@ namespace Web.Application.Services
 
         public async Task<CatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter)
         {
-            var queryItems = _catalogRepository.GetAllItemsQueryAsync();
+            var queryItems = _catalogRepository.GetAllItemsQuery();
             if (filter.CategoryId.HasValue)
             {
                 queryItems = queryItems.Where(w => w.CatalogCategoryId == filter.CategoryId.Value);
@@ -103,7 +103,7 @@ namespace Web.Application.Services
             var brands = _brandRepository.GetAllBrandsQueryAsync();
             if (categoryId.HasValue)
             {
-                var allowedBrandIds = await _catalogRepository.GetAllItemsQueryAsync()
+                var allowedBrandIds = await _catalogRepository.GetAllItemsQuery()
                     .Where(w => w.CatalogCategoryId == categoryId)
                     .Select(f => f.CatalogBrandId)
                     .Distinct()

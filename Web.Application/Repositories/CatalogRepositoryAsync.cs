@@ -21,7 +21,7 @@ namespace Web.Application.Repositories
         {
             return await _dbContext.CatalogItems.FindAsync(id);
         }
-        public IQueryable<CatalogItem> GetAllItemsQueryAsync()
+        public IQueryable<CatalogItem> GetAllItemsQuery()
         {
             return _dbContext.CatalogItems.AsQueryable();
         }
