@@ -9,10 +9,10 @@ namespace Web.Application.Contracts
 {
     public interface ICatalogApiClientService
     {
-        Task<CatalogItemsResponseDto> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize);
+        Task<GetCatalogItemsResponseDto> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize);
         Task<CatalogItemResponseDto> GetItem(long itemId);
         Task<IEnumerable<CatalogCategoryResponseDto>> GetCategories();
-        Task<IEnumerable<CatalogBrandResponseDto>> GetBrands(long? categoryId);
+        Task<IEnumerable<CatalogBrandResponseDto>> GetBrands(long? categoryId = null);
         Task<string> ItemPageUrl();
     }
 }

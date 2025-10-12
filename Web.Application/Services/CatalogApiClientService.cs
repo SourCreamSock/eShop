@@ -25,7 +25,7 @@ namespace Web.Application.Services
             _selfUrl = configuration.GetValue<string>("SelfUrl") ?? throw new ArgumentNullException();
         }
 
-        public async Task<CatalogItemsResponseDto> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize = null)
+        public async Task<GetCatalogItemsResponseDto> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize = null)
         {
 
             var queryParams = new Dictionary<string, string>();
@@ -42,7 +42,7 @@ namespace Web.Application.Services
             uriBuilder.Query = string.Join('&', queryParams.Select(s => s.Key + "=" + s.Value));
             var response = await _httpClient.GetAsync(uriBuilder.ToString());
             var result = await response.Content.ReadAsStringAsync();
-            var items = JsonConvert.DeserializeObject<CatalogItemsResponseDto>(result);
+            var items = JsonConvert.DeserializeObject<GetCatalogItemsResponseDto>(result);
             return items;
 
         }

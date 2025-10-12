@@ -1,25 +1,32 @@
 ﻿ using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
+using Web.Application.Utils.Extensions;
 using Web.Domain.Entities.Catalog;
 using Web.Persistence.Catalog;
 using static Web.Application.Services.CatalogService;
 
 namespace Catalog.API.Controllers
 {
+    [ApiController]
     public class CatalogController : ControllerBase
     {
         private readonly ICatalogService _catalogService;
         private readonly IMapper _mapper;
-        public CatalogController(ICatalogService catalogService, IMapper mapper)
+        IValidator<GetItemsFilterDto> _validator;
+
+        public CatalogController(ICatalogService catalogService, IMapper mapper, IValidator<GetItemsFilterDto> validator)
         {
             _catalogService = catalogService;
             _mapper = mapper;          
+            _validator = validator;
         }
         /// <summary>
         /// Получить товары
@@ -30,15 +37,19 @@ namespace Catalog.API.Controllers
         /// <param name="pageIndex"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(CatalogItemsResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetCatalogItemsResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("items")]
         public async Task<IActionResult> ItemsAsync([FromQuery] GetItemsFilterDto filter)
         {
-            if (!ModelState.IsValid)
+            var validatorResult = await _validator.ValidateAsync(filter);
+            if (!validatorResult.IsValid)
+            {
+                validatorResult.AddToMVCModelState(ModelState);
                 return BadRequest(ModelState);
+            }
             
-            CatalogItemsResponseDto response = await _catalogService.GetItemsAsync(filter);
+            GetCatalogItemsResponseDto response = await _catalogService.GetItemsAsync(filter);
 
             return Ok(response);
         }
@@ -108,7 +119,7 @@ namespace Catalog.API.Controllers
         public async Task<IActionResult> BrandsAsync(long? categoryId)//а точно FromQuery
         {
 
-            var brands = _catalogService.GetBrandsAsync(categoryId);
+            var brands = await _catalogService.GetBrandsAsync(categoryId);
             return Ok(brands);
         }
        

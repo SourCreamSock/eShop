@@ -35,9 +35,10 @@ namespace Web.Application.Services
             _mapper = mapper;
             _categoriesRepository = categoriesRepository;
             _catalogRepository = catalogRepository;
+            _brandRepository = brandRepository;
         }
 
-        public async Task<CatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter)
+        public async Task<GetCatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter)
         {
             var queryItems = _catalogRepository.GetAllItemsQuery();
             if (filter.CategoryId.HasValue)
@@ -57,7 +58,7 @@ namespace Web.Application.Services
             dbItems.ForEach(item => item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath));
 
             var responseItems = dbItems.Select(s => _mapper.Map<CatalogItemResponseDto>(s)).ToList();                        
-            CatalogItemsResponseDto response = new CatalogItemsResponseDto
+            GetCatalogItemsResponseDto response = new GetCatalogItemsResponseDto
             {
                 CatalogItems = responseItems,
                 TotalCount = responseItems.Count()

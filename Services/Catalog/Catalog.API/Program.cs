@@ -13,9 +13,9 @@ builder.Services.AddCatalogContext(conncetionString);
 //    );
 //    /*builder=> builder.EnableRetryOnFailure(2,TimeSpan.FromSeconds(5),null)*/
 //});
+builder.Services.AddCatalogServices();
 builder.Services.AddAutoMapper(typeof(DefaultAutoMapperProfile));
 builder.Services.AddControllers();
-builder.Services.AddCatalogServices();
 builder.Services.AddSwaggerGen(options=> {
     
     var xmlFile = "CatalogApi.xml";

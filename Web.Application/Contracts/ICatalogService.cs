@@ -11,7 +11,7 @@ namespace Web.Application.Contracts
 {
     public interface ICatalogService
     {
-        Task<CatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter);
+        Task<GetCatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter);
         Task<CatalogItem> GetItemByIdAsync(long id);
         Task<CatalogItem> AddItem(CatalogItemCreateRequestDto item);
         Task UpdateItem(CatalogItemUpdateRequestDto dto);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Web.Application.Contracts;
 using Web.Application.DTOs.Catalog;
 using Web.Application.Services;
 using WebMVC.Models;
@@ -9,8 +10,8 @@ namespace WebMVC.Controllers
 {
     public class CatalogController: Controller
     {
-        private CatalogApiClientService _catalogService;
-        public CatalogController(CatalogApiClientService catalogService ) { 
+        private ICatalogApiClientService _catalogService;
+        public CatalogController(ICatalogApiClientService catalogService ) { 
             _catalogService = catalogService;
         }
 

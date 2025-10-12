@@ -10,6 +10,10 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Web.Domain/Web.Domain.csproj", "Web.Domain/"]
+COPY ["Web.Infrastructure/Web.Infrastructure.csproj", "Web.Infrastructure/"]
+COPY ["Web.Persistence/Web.Persistence.csproj", "Web.Persistence/"]
+COPY ["Web.Application/Web.Application.csproj", "Web.Application/"]
 COPY ["WebMVC/WebMVC.csproj", "WebMVC/"]
 RUN dotnet restore "./WebMVC/./WebMVC.csproj"
 COPY . .

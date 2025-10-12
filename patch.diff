@@ -1,0 +1,1401 @@
+From 38f03c80f3a689c33ab45a17bb34b55a852b330d Mon Sep 17 00:00:00 2001
+From: Artoym Markelov <artoymm-2000@mail.ru>
+Date: Wed, 16 Jul 2025 23:05:27 +0400
+Subject: [PATCH] Revert "feat, fix: some changes testing"
+
+This reverts commit be11651b090a7a0917124cde191af919a5d9e287.
+---
+ EShop.sln                                     |   9 --
+ Services/Catalog/Catalog.API/CatalogAPI.xml   |  62 +++++++-
+ .../Controllers/CatalogController.cs          |   1 +
+ .../20240510113907_withoutEAV.Designer.cs     | 124 ++++++++++++++++
+ .../Migrations/20240510113907_withoutEAV.cs   |  94 ++++++++++++
+ .../20240512170125_addPictures.Designer.cs    | 128 +++++++++++++++++
+ .../Migrations/20240512170125_addPictures.cs  |  29 ++++
+ ...25161826_addDescriptionToItems.Designer.cs | 132 +++++++++++++++++
+ .../20240525161826_addDescriptionToItems.cs   |  29 ++++
+ ...02145342_addCatalogItemPathUri.Designer.cs | 136 ++++++++++++++++++
+ .../20240602145342_addCatalogItemPathUri.cs   |  29 ++++
+ ...40604172619_nullableProperties.Designer.cs | 134 +++++++++++++++++
+ .../20240604172619_nullableProperties.cs      |  54 +++++++
+ .../Migrations/CatalogContextModelSnapshot.cs | 130 +++++++++++++++++
+ .../CatalogControllerTest.cs                  |  65 +++++----
+ .../Repositories/CatalogRepositoryAsync.cs    |   2 +-
+ Web.Application/Services/CatalogService.cs    |   4 +-
+ .../Repositories/ICatalogRepositoryAsync.cs   |   2 +-
+ 18 files changed, 1126 insertions(+), 38 deletions(-)
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.Designer.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.Designer.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.Designer.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.Designer.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.Designer.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.cs
+ create mode 100644 Services/Catalog/Catalog.API/Migrations/CatalogContextModelSnapshot.cs
+
+diff --git a/EShop.sln b/EShop.sln
+index 1d013a8..df6b964 100644
+--- a/EShop.sln
++++ b/EShop.sln
+@@ -27,10 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Domain", "Web.Domain\We
+ EndProject
+ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Infrastructure", "Web.Infrastructure\Web.Infrastructure.csproj", "{C608EEC8-98B5-4E7B-9A81-EFE9EAFA2521}"
+ EndProject
+-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebTests", "WebTests", "{B9BF35DA-05F7-4BF1-91FD-1062D229195F}"
+-EndProject
+-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Application.UnitTests", "..\Web.Application.Tests\Web.Application.UnitTests.csproj", "{008F2A0A-7374-4E80-B8B0-22DF8CFA78C2}"
+-EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Any CPU = Debug|Any CPU
+@@ -69,10 +65,6 @@ Global
+ 		{C608EEC8-98B5-4E7B-9A81-EFE9EAFA2521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+ 		{C608EEC8-98B5-4E7B-9A81-EFE9EAFA2521}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{C608EEC8-98B5-4E7B-9A81-EFE9EAFA2521}.Release|Any CPU.Build.0 = Release|Any CPU
+-		{008F2A0A-7374-4E80-B8B0-22DF8CFA78C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+-		{008F2A0A-7374-4E80-B8B0-22DF8CFA78C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+-		{008F2A0A-7374-4E80-B8B0-22DF8CFA78C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+-		{008F2A0A-7374-4E80-B8B0-22DF8CFA78C2}.Release|Any CPU.Build.0 = Release|Any CPU
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+@@ -83,7 +75,6 @@ Global
+ 		{EB561766-E339-4C15-8925-F12BB41470E2} = {1FACF950-687C-4B9F-B554-421AF6C8E261}
+ 		{23B1847D-D667-4F9C-B245-8E439EA80F6B} = {EB561766-E339-4C15-8925-F12BB41470E2}
+ 		{5ADB31FF-6708-4343-AB4D-27ABE3CE3921} = {161CE19D-4472-4D61-AAA0-597BC9781AC3}
+-		{008F2A0A-7374-4E80-B8B0-22DF8CFA78C2} = {B9BF35DA-05F7-4BF1-91FD-1062D229195F}
+ 	EndGlobalSection
+ 	GlobalSection(ExtensibilityGlobals) = postSolution
+ 		SolutionGuid = {051A895A-38E1-48CF-9DBC-71C1C3E6F080}
+diff --git a/Services/Catalog/Catalog.API/CatalogAPI.xml b/Services/Catalog/Catalog.API/CatalogAPI.xml
+index a63df77..79e0916 100644
+--- a/Services/Catalog/Catalog.API/CatalogAPI.xml
++++ b/Services/Catalog/Catalog.API/CatalogAPI.xml
+@@ -4,7 +4,7 @@
+         <name>Catalog.API</name>
+     </assembly>
+     <members>
+-        <member name="M:Catalog.API.Controllers.CatalogController.ItemsAsync(Web.Application.DTOs.Catalog.GetItemsFilterDto)">
++        <member name="M:Catalog.API.Controllers.CatalogController.ItemsAsync(Catalog.API.Controllers.CatalogController.ItemFilter)">
+             <summary>
+             Получить товары
+             </summary>
+@@ -14,5 +14,65 @@
+             <param name="pageIndex"></param>
+             <returns></returns>
+         </member>
++        <member name="T:Catalog.API.Migrations.withoutEAV">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.withoutEAV.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.withoutEAV.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.withoutEAV.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="T:Catalog.API.Migrations.addPictures">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addPictures.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addPictures.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addPictures.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="T:Catalog.API.Migrations.addDescriptionToItems">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addDescriptionToItems.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addDescriptionToItems.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addDescriptionToItems.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="T:Catalog.API.Migrations.addCatalogItemPathUri">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addCatalogItemPathUri.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addCatalogItemPathUri.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.addCatalogItemPathUri.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="T:Catalog.API.Migrations.nullableProperties">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.nullableProperties.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.nullableProperties.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
++            <inheritdoc />
++        </member>
++        <member name="M:Catalog.API.Migrations.nullableProperties.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
++            <inheritdoc />
++        </member>
+     </members>
+ </doc>
+diff --git a/Services/Catalog/Catalog.API/Controllers/CatalogController.cs b/Services/Catalog/Catalog.API/Controllers/CatalogController.cs
+index 6b25ab6..0e9f5a8 100644
+--- a/Services/Catalog/Catalog.API/Controllers/CatalogController.cs
++++ b/Services/Catalog/Catalog.API/Controllers/CatalogController.cs
+@@ -1,4 +1,5 @@
+ ﻿ using AutoMapper;
++using Catalog.API.Models;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ using Swashbuckle.AspNetCore.Annotations;
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.Designer.cs b/Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.Designer.cs
+new file mode 100644
+index 0000000..75b6452
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.Designer.cs
+@@ -0,0 +1,124 @@
++﻿// <auto-generated />
++using Catalog.API.Infrastructure;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Metadata;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    [DbContext(typeof(CatalogContext))]
++    [Migration("20240510113907_withoutEAV")]
++    partial class withoutEAV
++    {
++        /// <inheritdoc />
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "8.0.0")
++                .HasAnnotation("Relational:MaxIdentifierLength", 128);
++
++            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogBrand", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogBrands", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogCategory", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogCategories", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<long>("CatalogBrandId")
++                        .HasColumnType("bigint");
++
++                    b.Property<long>("CatalogCategoryId")
++                        .HasColumnType("bigint");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<decimal>("Price")
++                        .HasColumnType("decimal(18,2)");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("CatalogBrandId");
++
++                    b.HasIndex("CatalogCategoryId");
++
++                    b.ToTable("CatalogItems", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.HasOne("Catalog.API.Model.CatalogBrand", "CatalogBrand")
++                        .WithMany()
++                        .HasForeignKey("CatalogBrandId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.HasOne("Catalog.API.Model.CatalogCategory", "CatalogCategory")
++                        .WithMany()
++                        .HasForeignKey("CatalogCategoryId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.Navigation("CatalogBrand");
++
++                    b.Navigation("CatalogCategory");
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.cs b/Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.cs
+new file mode 100644
+index 0000000..7337d69
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240510113907_withoutEAV.cs
+@@ -0,0 +1,94 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    /// <inheritdoc />
++    public partial class withoutEAV : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.CreateTable(
++                name: "CatalogBrands",
++                columns: table => new
++                {
++                    Id = table.Column<long>(type: "bigint", nullable: false)
++                        .Annotation("SqlServer:Identity", "1, 1"),
++                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false)
++                },
++                constraints: table =>
++                {
++                    table.PrimaryKey("PK_CatalogBrands", x => x.Id);
++                });
++
++            migrationBuilder.CreateTable(
++                name: "CatalogCategories",
++                columns: table => new
++                {
++                    Id = table.Column<long>(type: "bigint", nullable: false)
++                        .Annotation("SqlServer:Identity", "1, 1"),
++                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false)
++                },
++                constraints: table =>
++                {
++                    table.PrimaryKey("PK_CatalogCategories", x => x.Id);
++                });
++
++            migrationBuilder.CreateTable(
++                name: "CatalogItems",
++                columns: table => new
++                {
++                    Id = table.Column<long>(type: "bigint", nullable: false)
++                        .Annotation("SqlServer:Identity", "1, 1"),
++                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
++                    CatalogBrandId = table.Column<long>(type: "bigint", nullable: false),
++                    CatalogCategoryId = table.Column<long>(type: "bigint", nullable: false)
++                },
++                constraints: table =>
++                {
++                    table.PrimaryKey("PK_CatalogItems", x => x.Id);
++                    table.ForeignKey(
++                        name: "FK_CatalogItems_CatalogBrands_CatalogBrandId",
++                        column: x => x.CatalogBrandId,
++                        principalTable: "CatalogBrands",
++                        principalColumn: "Id",
++                        onDelete: ReferentialAction.Cascade);
++                    table.ForeignKey(
++                        name: "FK_CatalogItems_CatalogCategories_CatalogCategoryId",
++                        column: x => x.CatalogCategoryId,
++                        principalTable: "CatalogCategories",
++                        principalColumn: "Id",
++                        onDelete: ReferentialAction.Cascade);
++                });
++
++            migrationBuilder.CreateIndex(
++                name: "IX_CatalogItems_CatalogBrandId",
++                table: "CatalogItems",
++                column: "CatalogBrandId");
++
++            migrationBuilder.CreateIndex(
++                name: "IX_CatalogItems_CatalogCategoryId",
++                table: "CatalogItems",
++                column: "CatalogCategoryId");
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropTable(
++                name: "CatalogItems");
++
++            migrationBuilder.DropTable(
++                name: "CatalogBrands");
++
++            migrationBuilder.DropTable(
++                name: "CatalogCategories");
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.Designer.cs b/Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.Designer.cs
+new file mode 100644
+index 0000000..dec3c3f
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.Designer.cs
+@@ -0,0 +1,128 @@
++﻿// <auto-generated />
++using Catalog.API.Infrastructure;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Metadata;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    [DbContext(typeof(CatalogContext))]
++    [Migration("20240512170125_addPictures")]
++    partial class addPictures
++    {
++        /// <inheritdoc />
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "8.0.0")
++                .HasAnnotation("Relational:MaxIdentifierLength", 128);
++
++            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogBrand", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogBrands", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogCategory", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogCategories", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<long>("CatalogBrandId")
++                        .HasColumnType("bigint");
++
++                    b.Property<long>("CatalogCategoryId")
++                        .HasColumnType("bigint");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PicturePath")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<decimal>("Price")
++                        .HasColumnType("decimal(18,2)");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("CatalogBrandId");
++
++                    b.HasIndex("CatalogCategoryId");
++
++                    b.ToTable("CatalogItems", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.HasOne("Catalog.API.Model.CatalogBrand", "CatalogBrand")
++                        .WithMany()
++                        .HasForeignKey("CatalogBrandId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.HasOne("Catalog.API.Model.CatalogCategory", "CatalogCategory")
++                        .WithMany()
++                        .HasForeignKey("CatalogCategoryId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.Navigation("CatalogBrand");
++
++                    b.Navigation("CatalogCategory");
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.cs b/Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.cs
+new file mode 100644
+index 0000000..850c39b
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240512170125_addPictures.cs
+@@ -0,0 +1,29 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    /// <inheritdoc />
++    public partial class addPictures : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "PicturePath",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: false,
++                defaultValue: "");
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "PicturePath",
++                table: "CatalogItems");
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.Designer.cs b/Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.Designer.cs
+new file mode 100644
+index 0000000..e7255e0
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.Designer.cs
+@@ -0,0 +1,132 @@
++﻿// <auto-generated />
++using Catalog.API.Infrastructure;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Metadata;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    [DbContext(typeof(CatalogContext))]
++    [Migration("20240525161826_addDescriptionToItems")]
++    partial class addDescriptionToItems
++    {
++        /// <inheritdoc />
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "8.0.0")
++                .HasAnnotation("Relational:MaxIdentifierLength", 128);
++
++            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogBrand", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogBrands", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogCategory", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogCategories", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<long>("CatalogBrandId")
++                        .HasColumnType("bigint");
++
++                    b.Property<long>("CatalogCategoryId")
++                        .HasColumnType("bigint");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Description")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PicturePath")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<decimal>("Price")
++                        .HasColumnType("decimal(18,2)");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("CatalogBrandId");
++
++                    b.HasIndex("CatalogCategoryId");
++
++                    b.ToTable("CatalogItems", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.HasOne("Catalog.API.Model.CatalogBrand", "CatalogBrand")
++                        .WithMany()
++                        .HasForeignKey("CatalogBrandId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.HasOne("Catalog.API.Model.CatalogCategory", "CatalogCategory")
++                        .WithMany()
++                        .HasForeignKey("CatalogCategoryId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.Navigation("CatalogBrand");
++
++                    b.Navigation("CatalogCategory");
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.cs b/Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.cs
+new file mode 100644
+index 0000000..b22584e
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240525161826_addDescriptionToItems.cs
+@@ -0,0 +1,29 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    /// <inheritdoc />
++    public partial class addDescriptionToItems : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "Description",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: false,
++                defaultValue: "");
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "Description",
++                table: "CatalogItems");
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.Designer.cs b/Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.Designer.cs
+new file mode 100644
+index 0000000..c1a171e
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.Designer.cs
+@@ -0,0 +1,136 @@
++﻿// <auto-generated />
++using Catalog.API.Infrastructure;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Metadata;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    [DbContext(typeof(CatalogContext))]
++    [Migration("20240602145342_addCatalogItemPathUri")]
++    partial class addCatalogItemPathUri
++    {
++        /// <inheritdoc />
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "8.0.0")
++                .HasAnnotation("Relational:MaxIdentifierLength", 128);
++
++            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogBrand", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogBrands", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogCategory", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogCategories", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<long>("CatalogBrandId")
++                        .HasColumnType("bigint");
++
++                    b.Property<long>("CatalogCategoryId")
++                        .HasColumnType("bigint");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Description")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PicturePath")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PictureUri")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<decimal>("Price")
++                        .HasColumnType("decimal(18,2)");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("CatalogBrandId");
++
++                    b.HasIndex("CatalogCategoryId");
++
++                    b.ToTable("CatalogItems", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.HasOne("Catalog.API.Model.CatalogBrand", "CatalogBrand")
++                        .WithMany()
++                        .HasForeignKey("CatalogBrandId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.HasOne("Catalog.API.Model.CatalogCategory", "CatalogCategory")
++                        .WithMany()
++                        .HasForeignKey("CatalogCategoryId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.Navigation("CatalogBrand");
++
++                    b.Navigation("CatalogCategory");
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.cs b/Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.cs
+new file mode 100644
+index 0000000..92313ef
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240602145342_addCatalogItemPathUri.cs
+@@ -0,0 +1,29 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    /// <inheritdoc />
++    public partial class addCatalogItemPathUri : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "PictureUri",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: false,
++                defaultValue: "");
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "PictureUri",
++                table: "CatalogItems");
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.Designer.cs b/Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.Designer.cs
+new file mode 100644
+index 0000000..9cc98fa
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.Designer.cs
+@@ -0,0 +1,134 @@
++﻿// <auto-generated />
++using Catalog.API.Infrastructure;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Metadata;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    [DbContext(typeof(CatalogContext))]
++    [Migration("20240604172619_nullableProperties")]
++    partial class nullableProperties
++    {
++        /// <inheritdoc />
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "8.0.0")
++                .HasAnnotation("Relational:MaxIdentifierLength", 128);
++
++            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogBrand", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogBrands", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogCategory", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogCategories", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<long>("CatalogBrandId")
++                        .HasColumnType("bigint");
++
++                    b.Property<long>("CatalogCategoryId")
++                        .HasColumnType("bigint");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Description")
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PicturePath")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PictureUri")
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<decimal>("Price")
++                        .HasColumnType("decimal(18,2)");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("CatalogBrandId");
++
++                    b.HasIndex("CatalogCategoryId");
++
++                    b.ToTable("CatalogItems", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.HasOne("Catalog.API.Model.CatalogBrand", "CatalogBrand")
++                        .WithMany()
++                        .HasForeignKey("CatalogBrandId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.HasOne("Catalog.API.Model.CatalogCategory", "CatalogCategory")
++                        .WithMany()
++                        .HasForeignKey("CatalogCategoryId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.Navigation("CatalogBrand");
++
++                    b.Navigation("CatalogCategory");
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.cs b/Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.cs
+new file mode 100644
+index 0000000..477ed28
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/20240604172619_nullableProperties.cs
+@@ -0,0 +1,54 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    /// <inheritdoc />
++    public partial class nullableProperties : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AlterColumn<string>(
++                name: "PictureUri",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: true,
++                oldClrType: typeof(string),
++                oldType: "nvarchar(max)");
++
++            migrationBuilder.AlterColumn<string>(
++                name: "Description",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: true,
++                oldClrType: typeof(string),
++                oldType: "nvarchar(max)");
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AlterColumn<string>(
++                name: "PictureUri",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: false,
++                defaultValue: "",
++                oldClrType: typeof(string),
++                oldType: "nvarchar(max)",
++                oldNullable: true);
++
++            migrationBuilder.AlterColumn<string>(
++                name: "Description",
++                table: "CatalogItems",
++                type: "nvarchar(max)",
++                nullable: false,
++                defaultValue: "",
++                oldClrType: typeof(string),
++                oldType: "nvarchar(max)",
++                oldNullable: true);
++        }
++    }
++}
+diff --git a/Services/Catalog/Catalog.API/Migrations/CatalogContextModelSnapshot.cs b/Services/Catalog/Catalog.API/Migrations/CatalogContextModelSnapshot.cs
+new file mode 100644
+index 0000000..773c93b
+--- /dev/null
++++ b/Services/Catalog/Catalog.API/Migrations/CatalogContextModelSnapshot.cs
+@@ -0,0 +1,130 @@
++﻿// <auto-generated />
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Metadata;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++#nullable disable
++
++namespace Catalog.API.Migrations
++{
++    [DbContext(typeof(CatalogContext))]
++    partial class CatalogContextModelSnapshot : ModelSnapshot
++    {
++        protected override void BuildModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "8.0.0")
++                .HasAnnotation("Relational:MaxIdentifierLength", 128);
++
++            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogBrand", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogBrands", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogCategory", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CatalogCategories", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.Property<long>("Id")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("bigint");
++
++                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
++
++                    b.Property<long>("CatalogBrandId")
++                        .HasColumnType("bigint");
++
++                    b.Property<long>("CatalogCategoryId")
++                        .HasColumnType("bigint");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Description")
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("Name")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PicturePath")
++                        .IsRequired()
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<string>("PictureUri")
++                        .HasColumnType("nvarchar(max)");
++
++                    b.Property<decimal>("Price")
++                        .HasColumnType("decimal(18,2)");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("CatalogBrandId");
++
++                    b.HasIndex("CatalogCategoryId");
++
++                    b.ToTable("CatalogItems", (string)null);
++                });
++
++            modelBuilder.Entity("Catalog.API.Model.CatalogItem", b =>
++                {
++                    b.HasOne("Catalog.API.Model.CatalogBrand", "CatalogBrand")
++                        .WithMany()
++                        .HasForeignKey("CatalogBrandId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.HasOne("Catalog.API.Model.CatalogCategory", "CatalogCategory")
++                        .WithMany()
++                        .HasForeignKey("CatalogCategoryId")
++                        .OnDelete(DeleteBehavior.Cascade)
++                        .IsRequired();
++
++                    b.Navigation("CatalogBrand");
++
++                    b.Navigation("CatalogCategory");
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Services/Catalog/tests/Catalog.UnitTests/CatalogControllerTest.cs b/Services/Catalog/tests/Catalog.UnitTests/CatalogControllerTest.cs
+index 6270841..92da2ce 100644
+--- a/Services/Catalog/tests/Catalog.UnitTests/CatalogControllerTest.cs
++++ b/Services/Catalog/tests/Catalog.UnitTests/CatalogControllerTest.cs
+@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
+ using Moq;
+ using Web.Application.Contracts;
+ using Web.Application.DTOs.Catalog;
+-using Web.Application.Mappers.AutoMapperProfiles;
++using Web.Infrastructure.Mappers;
++using Web.Infrastructure.Mappers.AutoMapperProfiles;
+ using Web.Persistence.Catalog;
+ 
+ namespace Catalog.UnitTests
+@@ -31,13 +32,8 @@ namespace Catalog.UnitTests
+         [InlineData(1L)]
+         public async Task Delete_catalog_items_success(long itemId)
+         {
+-            var catalogServiceMock = new Mock<ICatalogService>();
+-            catalogServiceMock.Setup(s => s.DeleteItem(It.IsAny<long>())).Returns<Task>(value => value);
+-            var testCatalogController = await TestingEntities.CreateCatalogControllerTest(catalogServiceMock);
+-            var actionResult = await testCatalogController.DeleteItemAsync(itemId);
+-
+-            Assert.NotNull(actionResult);
+-            Assert.IsAssignableFrom<OkObjectResult>(actionResult);                        
++            var testEntites = await TestingEntities.CreateTestingEntities();
++            var testCatalogController = testEntites.TestCatalogController;            
+         }
+ 
+         //[Theory]
+@@ -57,10 +53,9 @@ namespace Catalog.UnitTests
+         [InlineData(null, null, 40, 0, 40L)]
+         public async Task Get_catalog_items_success(long? categoryId, long? brandId, int pageSize, int pageIndex, long expectedTotalCount)
+         {
+-            var catalogServiceMock = new Mock<ICatalogService>();
+-            catalogServiceMock.Setup(s => s.GetItemsAsync(It.IsAny<GetItemsFilterDto>())).Returns<Task<CatalogItemsResponseDto>>(value => value);
+-            var testCatalogController = await TestingEntities.CreateCatalogControllerTest(catalogServiceMock);
+-            var actionResult = await testCatalogController.ItemsAsync(new GetItemsFilterDto(categoryId, brandId, pageSize, pageIndex));
++            var testEntites = await TestingEntities.CreateTestingEntities();
++            var testCatalogController = testEntites.TestCatalogController;
++            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.GetItemsFilter(categoryId, brandId, pageSize, pageIndex));
+ 
+             Assert.NotNull(actionResult);
+             var okObjectResult = Assert.IsAssignableFrom<OkObjectResult>(actionResult);
+@@ -71,25 +66,47 @@ namespace Catalog.UnitTests
+         [InlineData(-1L, -1L, -1, -1)]
+         public async Task Get_catalog_items_with_wrong_parameters_is_badrequest(long? categoryId, long? brandId, int pageSize, int pageIndex)
+         {
+-            var catalogServiceMock = new Mock<ICatalogService>();
+-            //catalogServiceMock.Setup(s => s.GetItemsAsync(It.IsAny<GetItemsFilterDto>())).Returns<Task<CatalogItemsResponseDto>>(value => value);
+-
+-            var testCatalogController = await TestingEntities.CreateCatalogControllerTest(catalogServiceMock);
+-            var actionResult = await testCatalogController.ItemsAsync(new GetItemsFilterDto(categoryId, brandId, pageSize, pageIndex));
++            var testEntites = await TestingEntities.CreateTestingEntities();
++            var testCatalogController = testEntites.TestCatalogController;
++            var actionResult = await testCatalogController.ItemsAsync(new CatalogController.GetItemsFilter(categoryId, brandId, pageSize, pageIndex));
+ 
+             Assert.IsType<BadRequestResult>(actionResult);
+         }
+         
+     }
+-    public static class TestingEntities
+-    {                
+-        public static async Task<CatalogController> CreateCatalogControllerTest(Mock<ICatalogService> catalogServiceMock)
++    public class TestingEntities
++    {
++        public  CatalogContext CatalogContext { get; set; }
++        public CatalogController TestCatalogController { get; set; }
++        private TestingEntities(CatalogContext catalogContext, CatalogController catalogController) {
++            CatalogContext = catalogContext;
++            TestCatalogController = catalogController;
++        }
++        public async static Task<TestingEntities> CreateTestingEntities()
+         {
+-            var defaultProfile = new DefaultAutoMapperProfile();
+-            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(defaultProfile));
+-            var mapper = new Mapper(configuration);
++            var catalogContext = await CreateTestCatalogContext();
++            var catalogController = await CreateCatalogControllerTest(catalogContext);
++            return new TestingEntities(catalogContext, catalogController);
++        }
++        public static async Task<CatalogContext> CreateTestCatalogContext()
++        {
++            var optionsBuilder = new DbContextOptionsBuilder<CatalogContext>()
++                      .UseInMemoryDatabase("testDataBase");
++            var options = optionsBuilder.Options;
++            var catalogContext = new CatalogContext(options);
++            catalogContext.Database.EnsureDeleted();
++            var catalogContextSeed = new CatalogContextSeed();
++            await catalogContextSeed.SeedAsync(catalogContext);
++            return catalogContext;
++        }
++        public static async Task<CatalogController> CreateCatalogControllerTest(CatalogContext catalogContext)
++        {            
++            var mapper = MapperHelper.CreateDefaultMapper();
++
++            var pictureServiceMock = new Mock<IPictureService>();
++            pictureServiceMock.Setup(s => s.FullPathToPicture(It.IsAny<string>())).Returns<string>(value => value);
+ 
+-            var testCatalogController = new CatalogController(catalogServiceMock.Object, mapper);
++            var testCatalogController = new CatalogController(catalogContext, pictureServiceMock.Object, mapper);
+             return testCatalogController;
+         }
+         //~TestingEntities()
+diff --git a/Web.Application/Repositories/CatalogRepositoryAsync.cs b/Web.Application/Repositories/CatalogRepositoryAsync.cs
+index 5f186b0..d809815 100644
+--- a/Web.Application/Repositories/CatalogRepositoryAsync.cs
++++ b/Web.Application/Repositories/CatalogRepositoryAsync.cs
+@@ -21,7 +21,7 @@ namespace Web.Application.Repositories
+         {
+             return await _dbContext.CatalogItems.FindAsync(id);
+         }
+-        public IQueryable<CatalogItem> GetAllItemsQuery()
++        public IQueryable<CatalogItem> GetAllItemsQueryAsync()
+         {
+             return _dbContext.CatalogItems.AsQueryable();
+         }
+diff --git a/Web.Application/Services/CatalogService.cs b/Web.Application/Services/CatalogService.cs
+index 57b1f92..f89934b 100644
+--- a/Web.Application/Services/CatalogService.cs
++++ b/Web.Application/Services/CatalogService.cs
+@@ -39,7 +39,7 @@ namespace Web.Application.Services
+ 
+         public async Task<CatalogItemsResponseDto> GetItemsAsync(GetItemsFilterDto filter)
+         {
+-            var queryItems = _catalogRepository.GetAllItemsQuery();
++            var queryItems = _catalogRepository.GetAllItemsQueryAsync();
+             if (filter.CategoryId.HasValue)
+             {
+                 queryItems = queryItems.Where(w => w.CatalogCategoryId == filter.CategoryId.Value);
+@@ -103,7 +103,7 @@ namespace Web.Application.Services
+             var brands = _brandRepository.GetAllBrandsQueryAsync();
+             if (categoryId.HasValue)
+             {
+-                var allowedBrandIds = await _catalogRepository.GetAllItemsQuery()
++                var allowedBrandIds = await _catalogRepository.GetAllItemsQueryAsync()
+                     .Where(w => w.CatalogCategoryId == categoryId)
+                     .Select(f => f.CatalogBrandId)
+                     .Distinct()
+diff --git a/Web.Domain/Repositories/ICatalogRepositoryAsync.cs b/Web.Domain/Repositories/ICatalogRepositoryAsync.cs
+index 14d00cd..605ba45 100644
+--- a/Web.Domain/Repositories/ICatalogRepositoryAsync.cs
++++ b/Web.Domain/Repositories/ICatalogRepositoryAsync.cs
+@@ -10,7 +10,7 @@ namespace Web.Domain.Repositories
+     public interface ICatalogRepositoryAsync
+     {
+         Task<CatalogItem?> GetItemByIdAsync(long id);
+-        IQueryable<CatalogItem> GetAllItemsQuery();
++        IQueryable<CatalogItem> GetAllItemsQueryAsync();
+ 
+         Task<IList<CatalogItem>> GetAllItemsAsync();
+ 
+-- 
+2.38.1.windows.1
+
