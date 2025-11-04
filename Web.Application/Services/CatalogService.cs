@@ -50,27 +50,50 @@ namespace Web.Application.Services
                 queryItems = queryItems.Where(w => w.CatalogBrandId == filter.BrandId.Value);
             }
 
-            var dbItems = await queryItems
+            var responseItems = await queryItems
                 .Skip(filter.PageSize * filter.PageIndex)
                 .Take(filter.PageSize)
                 .AsNoTracking()
+                .Select(item=>new CatalogItemResponseDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Code = item.Code,   
+                    Price = item.Price,
+                    Description = item.Description,
+                    CatalogBrandId = item.CatalogBrandId,
+                    CatalogCategoryId = item.CatalogCategoryId,
+                    PictureUri = _pictureHelper.FullPathToPicture(item.PicturePath)
+                })
                 .ToListAsync();
-            dbItems.ForEach(item => item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath));
-
-            var responseItems = dbItems.Select(s => _mapper.Map<CatalogItemResponseDto>(s)).ToList();                        
+                                 
             GetCatalogItemsResponseDto response = new GetCatalogItemsResponseDto
             {
                 CatalogItems = responseItems,
-                TotalCount = responseItems.Count()
+                TotalCount = queryItems.LongCount()
             };
             return response;
         }
-        public async Task<CatalogItem> GetItemByIdAsync(long id)
+        public async Task<CatalogItemResponseDto> GetItemByIdAsync(long id)
         {
-            var item = await _catalogRepository.GetItemByIdAsync(id);      
-            if (item != null)
-                item.PicturePath = _pictureHelper.FullPathToPicture(item.PicturePath);
-            return item;
+            CatalogItemResponseDto responseItem = null;
+            var dbItem = await _catalogRepository.GetItemByIdAsync(id);      
+            if (dbItem != null)
+            {
+                responseItem = new CatalogItemResponseDto
+                {
+                    Id = dbItem.Id,
+                    Name = dbItem.Name,
+                    Code = dbItem.Code,
+                    Price = dbItem.Price,
+                    Description = dbItem.Description,
+                    CatalogBrandId = dbItem.CatalogBrandId,
+                    CatalogCategoryId = dbItem.CatalogCategoryId,
+                    PictureUri = _pictureHelper.FullPathToPicture(dbItem.PicturePath)
+                };                
+            }
+                
+            return responseItem;
         }
         public async Task<CatalogItem> AddItem(CatalogItemCreateRequestDto dto)
         {            

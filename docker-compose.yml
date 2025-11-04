@@ -17,7 +17,7 @@ services:
        dockerfile: Services/Catalog/Catalog.API/Dockerfile
     environment:              
       - ConnectionStrings__CatalogConnection=Server=sql;Database=Catalogdb;User Id=sa;Password=!PasswordOkey;Encrypt=false;TrustServerCertificate=true;
-      - BaseUri=http://host.docker.internal:5002/
+      - BaseUri=http://localhost:5002/
     depends_on:
       - sql      
     ports:
@@ -30,8 +30,10 @@ services:
       - sql
       - catalog-api
     environment:
-      - CatalogApiUrl=http://host.docker.internal:5002/
-      - SelfUrl=http://host.docker.internal:5003/
+      - CatalogApiUriInternal=http://catalog-api:8080/
+      - CatalogApiUriExternal=http://localhost:5002/
+      - StaticFilesCatalogUriInternal=http://catalog-api:8080/
+      - StaticFilesCatalogUriExternal=http://localhost:5002/
     ports:
       - '5003:8080'  
 volumes:

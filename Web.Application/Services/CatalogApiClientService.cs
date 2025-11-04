@@ -17,33 +17,41 @@ namespace Web.Application.Services
         //private readonly string _GetAllCatalogItems;
         private readonly HttpClient _httpClient;
         private readonly string _urlCatalog;
-        private readonly string _selfUrl;
+        private readonly string _staticFilesCatalogUri;
         public CatalogApiClientService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _urlCatalog = configuration.GetValue<string>("CatalogApiUrl") ?? throw new ArgumentNullException();
-            _selfUrl = configuration.GetValue<string>("SelfUrl") ?? throw new ArgumentNullException();
+            _urlCatalog = configuration.GetValue<string>("CatalogApiUriInternal") ?? throw new ArgumentNullException();
+            _staticFilesCatalogUri = configuration.GetValue<string>("StaticFilesCatalogUriExternal") ?? throw new ArgumentNullException();
         }
 
         public async Task<GetCatalogItemsResponseDto> GetItems(long? categoryId, long? brandId, int? pageIndex, int? pageSize = null)
         {
 
-            var queryParams = new Dictionary<string, string>();
-            var urlItems = "items";
-            var uriBuilder = new UriBuilder(_urlCatalog + urlItems);
-            if (categoryId.HasValue)
-                queryParams["categoryId"] = categoryId.Value.ToString();
-            if (brandId.HasValue)
-                queryParams["brandId"] = brandId.Value.ToString();
-            if (pageIndex.HasValue)
-                queryParams["pageIndex"] = pageIndex.Value.ToString();
-            if (pageSize.HasValue)
-                queryParams["pageSize"] = pageSize.Value.ToString();
-            uriBuilder.Query = string.Join('&', queryParams.Select(s => s.Key + "=" + s.Value));
-            var response = await _httpClient.GetAsync(uriBuilder.ToString());
-            var result = await response.Content.ReadAsStringAsync();
-            var items = JsonConvert.DeserializeObject<GetCatalogItemsResponseDto>(result);
-            return items;
+            try
+            {
+                var queryParams = new Dictionary<string, string>();
+                var urlItems = "items";
+                var uriBuilder = new UriBuilder(_urlCatalog + urlItems);
+                if (categoryId.HasValue)
+                    queryParams["categoryId"] = categoryId.Value.ToString();
+                if (brandId.HasValue)
+                    queryParams["brandId"] = brandId.Value.ToString();
+                if (pageIndex.HasValue)
+                    queryParams["pageIndex"] = pageIndex.Value.ToString();
+                if (pageSize.HasValue)
+                    queryParams["pageSize"] = pageSize.Value.ToString();
+                uriBuilder.Query = string.Join('&', queryParams.Select(s => s.Key + "=" + s.Value));
+                var response = await _httpClient.GetAsync(uriBuilder.ToString());
+                var result = await response.Content.ReadAsStringAsync();
+                var items = JsonConvert.DeserializeObject<GetCatalogItemsResponseDto>(result);
+                return items;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
         }
         public async Task<CatalogItemResponseDto> GetItem(long itemId)
@@ -96,7 +104,7 @@ namespace Web.Application.Services
         }
         public async Task<string> ItemPageUrl()
         {
-            return _selfUrl + "Catalog/CatalogItem/";
+            return _staticFilesCatalogUri + "Catalog/CatalogItem/";
         }
     }
 }

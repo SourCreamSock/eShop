@@ -69,7 +69,7 @@ namespace Catalog.UnitTests
                     CatalogBrandId = 1,
                     Code ="ApplesAntonovka",
                     Name="Антоновка",
-                    PicturePath = "ApplesAntonovka",
+                    PictureUri = "ApplesAntonovka",
                     Description = "Вкусные  яблоки из антоновки. Описание Описание Описание " +
                         "Описание  Описание  Описание  Описание  Описание  Описание  Описание "
                 },
@@ -78,7 +78,7 @@ namespace Catalog.UnitTests
                     CatalogBrandId = 1,
                     Code="ApplesGreen",
                     Name="Зеленые яблоки",
-                    PicturePath = "ApplesGreen",
+                    PictureUri = "ApplesGreen",
                     Description = "Вкусные зеленые яблоки просто яблоки. Описание Описание Описание " +
                         "Описание  Описание  Описание  Описание  Описание  Описание  Описание "
                 }

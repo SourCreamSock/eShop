@@ -9,7 +9,7 @@ namespace Web.Application.Mappers.AutoMapperProfiles
     {
         public DefaultAutoMapperProfile()
         {
-            this.CreateMap<CatalogItem, CatalogItemResponseDto>().ReverseMap();            
+            //this.CreateMap<CatalogItem, CatalogItemResponseDto>().ReverseMap();            
             this.CreateMap<CatalogItem, CatalogItemCreateRequestDto>().ReverseMap();            
             this.CreateMap<CatalogItem, CatalogItemUpdateRequestDto>().ReverseMap();                        
             this.CreateMap<CatalogCategory, CatalogCategoryResponseDto>().ReverseMap();            
