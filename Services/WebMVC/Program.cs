@@ -9,7 +9,11 @@ builder.Services.AddCatalogApiClientServices();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
-app.UseStaticFiles();
+else
+{
+    app.UseExceptionHandler()
+}
+    app.UseStaticFiles();
 app.UseRouting();
 app.MapControllerRoute("default","{controller=Catalog}/{action=Index}/{id?}");
 app.MapControllers();

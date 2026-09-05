@@ -21,9 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EShop\Web.Application\Web.Application.csproj" />
-    <ProjectReference Include="..\EShop\Web.Persistence\Web.Persistence.csproj" />
-  </ItemGroup>
+    <ProjectReference Include="..\..\Web.Application\Web.Application.csproj" />
+  </ItemGroup>  
 
   <ItemGroup>
     <Using Include="Xunit" />

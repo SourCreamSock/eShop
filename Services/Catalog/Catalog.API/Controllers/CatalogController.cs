@@ -20,13 +20,18 @@ namespace Catalog.API.Controllers
     {
         private readonly ICatalogService _catalogService;
         private readonly IMapper _mapper;
-        IValidator<GetItemsFilterDto> _validator;
+        private readonly IValidator<GetItemsFilterDto> _validator;
+        private readonly ILogger<CatalogController> _logger;
 
-        public CatalogController(ICatalogService catalogService, IMapper mapper, IValidator<GetItemsFilterDto> validator)
+        public CatalogController(ICatalogService catalogService, 
+            IMapper mapper, 
+            IValidator<GetItemsFilterDto> validator,
+            ILogger<CatalogController> logger)
         {
             _catalogService = catalogService;
             _mapper = mapper;          
             _validator = validator;
+            _logger = logger;
         }
         /// <summary>
         /// Получить товары
@@ -74,9 +79,19 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateItemAsync([FromBody] CatalogItemCreateRequestDto item)
         {
-            var newItem = await _catalogService.AddItem(item);
-            var actionName = nameof(ItemAsync);
-            return CreatedAtAction(actionName, newItem, null);
+            try
+            {
+                _logger.LogInformation($"CreateItemAsync request {@item}", item);
+                var newItem = await _catalogService.AddItem(item);
+                var actionName = nameof(ItemAsync);
+                return CreatedAtAction(actionName, newItem, null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error on CreateItemAsync request {@item}", item);
+                throw;
+            }
+
         }
         [HttpDelete]
         [Route("items/{id:long}")]
@@ -84,8 +99,17 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteItemAsync(long id)
         {
-            await _catalogService.DeleteItem(id);
-            return Ok();    
+            try
+            {
+                _logger.LogInformation($"DeleteItemAsync request {@id}", id);
+                await _catalogService.DeleteItem(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error on DeleteItemAsync request {@id}", id);
+                throw;
+            } 
         }
 
         [HttpPut]
@@ -95,11 +119,20 @@ namespace Catalog.API.Controllers
         [Route("items/{id:long}")]
         public async Task<IActionResult> UpdateItemAsync(long id,[FromBody] CatalogItemUpdateRequestDto catalogItemRequest)
         {
-            var dbItem = await _catalogService.GetItemByIdAsync(id);
-            if (dbItem == null)
-                return NotFound();
-            await _catalogService.UpdateItem(catalogItemRequest);            
-            return Ok();
+            try
+            {
+                _logger.LogInformation("UpdateItemAsync request id:{id}, body: {@catalogItemRequest}", id, catalogItemRequest);
+                var dbItem = await _catalogService.GetItemByIdAsync(id);
+                if (dbItem == null)
+                    return NotFound();
+                await _catalogService.UpdateItem(catalogItemRequest);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Error on DeleteItemAsync request id:{id}, body: {@catalogItemRequest}", id, catalogItemRequest);
+                throw;
+            }
         }
 
         [HttpGet]
@@ -108,7 +141,6 @@ namespace Catalog.API.Controllers
         [SwaggerOperation(Tags = new[] { "Categories"})]
         public async Task<IActionResult> CategoriesAsync()//а точно FromQuery
         {
-
             var categories = await _catalogService.GetCategoriesAsync();
             return Ok(categories);
         }

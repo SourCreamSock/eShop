@@ -25,7 +25,7 @@ services:
   webmvc:
     build: 
        context: .
-       dockerfile: WebApps/WebMVC/Dockerfile
+       dockerfile: Services/WebMVC/Dockerfile
     depends_on:
       - sql
       - catalog-api
